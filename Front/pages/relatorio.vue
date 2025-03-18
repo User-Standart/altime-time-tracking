@@ -1,54 +1,73 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import * as XLSX from 'xlsx' // Para exportar para Excel
-import { jsPDF } from 'jspdf' // Para exportar para PDF
+import * as XLSX from 'xlsx'
+import { jsPDF } from 'jspdf'
 
-// Dados de exemplo para relatório
+// Dados de funcionários
 const funcionarios = ref([
-  { nome: 'Funcionario A', cpf: '123456789', empresa: 'Empresa A', funcao: 'Developer', email: 'a@empresa.com', entrada: '08:00', saida: '17:00', diaTrabalhado: '2025-03-11' },
-  { nome: 'Funcionario B', cpf: '987654321', empresa: 'Empresa B', funcao: 'Manager', email: 'b@empresa.com', entrada: '09:00', saida: '18:00', diaTrabalhado: '2025-03-10' },
-  { nome: 'Funcionario C', cpf: '192837465', empresa: 'Empresa C', funcao: 'Designer', email: 'c@empresa.com', entrada: '07:00', saida: '16:00', diaTrabalhado: '2025-03-09' },
-  // mais funcionários...
+  { id: 1, nome: 'Funcionario A', cpf: '123456789', empresa: 'Empresa A', funcao: 'Developer', email: 'a@empresa.com', entrada: '08:00', saida: '17:00', diaTrabalhado: '2025-03-11', selecionado: false },
+  { id: 2, nome: 'Funcionario B', cpf: '987654321', empresa: 'Empresa B', funcao: 'Manager', email: 'b@empresa.com', entrada: '09:00', saida: '18:00', diaTrabalhado: '2025-03-10', selecionado: false },
+  { id: 3, nome: 'Funcionario C', cpf: '192837465', empresa: 'Empresa C', funcao: 'Designer', email: 'c@empresa.com', entrada: '07:00', saida: '16:00', diaTrabalhado: '2025-03-09', selecionado: false },
 ])
 
-// Filtro de funcionário
-const filtroFuncionario = ref('')
+// Controle do filtro
+const filtroAtivo = ref(false) // Para exibir ou ocultar o menu de filtros
+const filtrosSelecionados = ref<{ [key: string]: boolean }>({
+  nome: true,
+  funcao: false,
+  empresa: false,
+  cpf: false,
+})
+const termoPesquisa = ref('')
 
-// Computed para filtrar os funcionários
+// Computed para filtrar os funcionários com base nos filtros selecionados
 const funcionariosFiltrados = computed(() => {
   return funcionarios.value.filter(f => {
-    return f.nome.toLowerCase().includes(filtroFuncionario.value.toLowerCase()) ||
-           f.funcao.toLowerCase().includes(filtroFuncionario.value.toLowerCase()) ||
-           f.empresa.toLowerCase().includes(filtroFuncionario.value.toLowerCase()) ||
-           f.email.toLowerCase().includes(filtroFuncionario.value.toLowerCase())
+    if (!termoPesquisa.value) return true
+
+    return (
+      (filtrosSelecionados.value.nome && f.nome.toLowerCase().includes(termoPesquisa.value.toLowerCase())) ||
+      (filtrosSelecionados.value.funcao && f.funcao.toLowerCase().includes(termoPesquisa.value.toLowerCase())) ||
+      (filtrosSelecionados.value.empresa && f.empresa.toLowerCase().includes(termoPesquisa.value.toLowerCase())) ||
+      (filtrosSelecionados.value.cpf && f.cpf.includes(termoPesquisa.value))
+    )
   })
 })
 
-// Função para exportar para Excel
+// Computed para obter os funcionários selecionados para exportação
+const funcionariosSelecionados = computed(() => {
+  return funcionariosFiltrados.value.filter(f => f.selecionado)
+})
+
+// Funções de exportação (Excel e PDF)
 const exportToExcel = () => {
-  const ws = XLSX.utils.json_to_sheet(funcionariosFiltrados.value)
+  if (funcionariosSelecionados.value.length === 0) {
+    alert('Selecione pelo menos um funcionário para exportar!')
+    return
+  }
+  const ws = XLSX.utils.json_to_sheet(funcionariosSelecionados.value)
   const wb = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(wb, ws, 'Funcionarios')
   XLSX.writeFile(wb, 'relatorio_funcionarios.xlsx')
 }
 
-// Função para exportar para PDF
 const exportToPDF = () => {
+  if (funcionariosSelecionados.value.length === 0) {
+    alert('Selecione pelo menos um funcionário para exportar!')
+    return
+  }
+
   const doc = new jsPDF()
   doc.setFontSize(12)
-
-  // Adicionar título
   doc.text('Relatório de Funcionários', 14, 20)
 
-  // Cabeçalho da tabela
   const headers = ['Nome', 'CPF', 'Empresa', 'Função', 'E-mail', 'Entrada', 'Saída', 'Dia Trabalhado']
   let y = 30
   headers.forEach((header, i) => {
     doc.text(header, 14 + i * 30, y)
   })
 
-  // Adicionar os dados da tabela
-  funcionariosFiltrados.value.forEach((f, i) => {
+  funcionariosSelecionados.value.forEach((f, i) => {
     y += 10
     doc.text(f.nome, 14, y)
     doc.text(f.cpf, 44, y)
@@ -60,73 +79,101 @@ const exportToPDF = () => {
     doc.text(f.diaTrabalhado, 224, y)
   })
 
-  // Salvar o arquivo PDF
   doc.save('relatorio_funcionarios.pdf')
 }
 </script>
 
 <template>
   <div class="ml-16 lg:ml-48 p-4 flex flex-col space-y-6">
-    <h2 class="text-xl font-bold">Relatório de Funcionários</h2>
+    <div class="flex justify-between items-center">
+      <h2 class="text-xl font-bold">Relatório de Funcionários</h2>
 
-    <!-- Campo de Filtro -->
-    <div class="mb-4">
-      <input
-        v-model="filtroFuncionario"
-        type="text"
-        placeholder="Filtrar por nome, função ou empresa"
-        class="p-2 rounded-lg border border-gray-300 shadow-md w-full"
-      />
+      <!-- Botão de Filtragem -->
+      <div class="relative">
+        <button 
+          @click="filtroAtivo = !filtroAtivo" 
+          class="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition-all"
+        >
+          <Icon name="mdi:filter" class="w-6 h-5" />
+        </button>
+
+        <!-- Menu de Filtros -->
+        <div 
+          v-if="filtroAtivo" 
+          class="absolute right-0 mt-2 w-48 bg-white border border-gray-300 shadow-lg rounded-lg p-4"
+        >
+          <p class="text-sm font-bold mb-2">Filtrar por:</p>
+          <div class="space-y-2">
+            <label class="flex items-center space-x-2">
+              <input type="checkbox" v-model="filtrosSelecionados.nome" />
+              <span>Nome</span>
+            </label>
+            <label class="flex items-center space-x-2">
+              <input type="checkbox" v-model="filtrosSelecionados.funcao" />
+              <span>Função</span>
+            </label>
+            <label class="flex items-center space-x-2">
+              <input type="checkbox" v-model="filtrosSelecionados.empresa" />
+              <span>Empresa</span>
+            </label>
+            <label class="flex items-center space-x-2">
+              <input type="checkbox" v-model="filtrosSelecionados.cpf" />
+              <span>CPF</span>
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Tabela de funcionários -->
+    <!-- Campo de Pesquisa -->
+    <input
+      v-if="Object.values(filtrosSelecionados).some(v => v)"
+      v-model="termoPesquisa"
+      type="text"
+      placeholder="Digite para filtrar"
+      class="p-2 rounded-lg border border-gray-300 shadow-md w-full"
+    />
+
+    <!-- Tabela -->
     <div class="overflow-x-auto bg-white rounded-lg shadow-md">
       <table class="min-w-full table-auto border-collapse">
         <thead class="bg-gray-200">
           <tr>
+            <th class="border px-4 py-2 text-center">✔</th>
             <th class="border px-4 py-2 text-left">Nome</th>
             <th class="border px-4 py-2 text-left">CPF</th>
             <th class="border px-4 py-2 text-left">Empresa</th>
             <th class="border px-4 py-2 text-left">Função</th>
-            <th class="border px-4 py-2 text-left">E-mail</th>
-            <th class="border px-4 py-2 text-left">Entrada</th>
-            <th class="border px-4 py-2 text-left">Saída</th>
-            <th class="border px-4 py-2 text-left">Dia Trabalhado</th>
           </tr>
         </thead>
         <tbody>
-          <!-- Exibindo os funcionários filtrados -->
-          <tr v-for="f in funcionariosFiltrados" :key="f.cpf">
+          <tr v-for="f in funcionariosFiltrados" :key="f.id">
+            <td class="border px-4 py-2 text-center">
+              <input type="checkbox" v-model="f.selecionado" class="scale-150" />
+            </td>
             <td class="border px-4 py-2">{{ f.nome }}</td>
             <td class="border px-4 py-2">{{ f.cpf }}</td>
             <td class="border px-4 py-2">{{ f.empresa }}</td>
             <td class="border px-4 py-2">{{ f.funcao }}</td>
-            <td class="border px-4 py-2">{{ f.email }}</td>
-            <td class="border px-4 py-2">{{ f.entrada }}</td>
-            <td class="border px-4 py-2">{{ f.saida }}</td>
-            <td class="border px-4 py-2">{{ f.diaTrabalhado }}</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Botões de Exportação -->
-    <div class="flex space-x-4 mt-6">
-      <button @click="exportToExcel" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Exportar para Excel</button>
-      <!-- Botão de Exportação para PDF -->
-<!-- Botão de Exportação para PDF -->
-<button 
-  @click="exportToPDF" 
-  class="px-4 py-2 bg-[#3ab0ff] text-white rounded-lg shadow-md hover:bg-[#2a94d2] transition-all duration-300"
->
-  Exportar para PDF
-</button>
-
-
+    <!-- Botões de Exportação (Abaixo da Tabela) -->
+    <div class="flex justify-end space-x-4 mt-4">
+      <button 
+        @click="exportToPDF" 
+        class="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
+      >
+        Exportar para PDF
+      </button>
+      <button 
+        @click="exportToExcel" 
+        class="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all"
+      >
+        Exportar para Excel
+      </button>
     </div>
   </div>
 </template>
-
-<style scoped>
-/* Estilos personalizados para a tela de relatório */
-</style>
