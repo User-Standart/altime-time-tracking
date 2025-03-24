@@ -82,9 +82,4 @@ Ser uma referência no desenvolvimento de sistemas de controle de ponto, proporc
 - **MySQL** para o banco de dados relacional.
 - **Spring Boot** para estruturação da API.
 - **React** para desenvolvimento do frontend.
-- **Docker** para facilitar a implantação.
-- **Swagger** para documentação da API.
-
----
-
-O projeto está em desenvolvimento e contará com entregas contínuas conforme o progresso da equipe.
+- **Nuxt** para facilitar a implantação e renderização no lado do servidor.
