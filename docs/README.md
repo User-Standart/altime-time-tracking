@@ -1,8 +1,9 @@
 # 📚 Bem-vindo ao Docs do Projeto Altime!
 
-Seja muito bem-vindo à parte de **documentação** do nosso projeto! 🎉
+Este repositório centraliza os materiais de apoio ao sistema Altime, desenvolvido para o controle de ponto de profissionais terceirizados.  
+Nele, você encontrará documentos essenciais para o uso e instalação do sistema.
 
-Aqui você vai encontrar todos os materiais importantes para entender, instalar, usar e acompanhar o desenvolvimento do sistema Altime.
+Documentação desenvolvida pelos alunos do 3º semestre do tecnólogo em Banco de Dados, na FATEC Profº Jessen Vidal – São José dos Campos, SP.
 
 ---
 
@@ -28,16 +29,17 @@ Aqui você vai encontrar todos os materiais importantes para entender, instalar,
 
 ## 🔗 Links rápidos
 
-- [Guia de Instalação.pdf](./Guia%20de%20Instala%C3%A7%C3%A3o.pdf)
-- [Manual do Usuário.pdf](./Manual%20do%20Usuario.pdf)
-- [Vídeo demonstrativo (Screencast).zip](./Screencast%20from%202025-03-29%2021-02-48.zip)
-- [Tela login GIF](./tela%20login%202.gif)
+- [Guia de instalação](https://github.com/User-Standart/User-Standart-docs/blob/main/Guia%20de%20Instalac%CC%A7a%CC%83o.pdf)
+- [Manual do usuário](https://github.com/User-Standart/User-Standart-docs/blob/main/Manual%20do%20Usuario.pdf)
+- [Vídeos das Sprints (Screencast)](https://github.com/User-Standart/User-Standart-docs/blob/main/Screencast%20from%202025-03-29%2021-02-48.zip)
+- [Vídeo demonstrativo (GIF)](https://github.com/User-Standart/User-Standart-docs/blob/main/tela%20login%202.gif)
 
 ---
 
 Se tiver dúvidas ou sugestões, fique à vontade para abrir uma issue ou entrar em contato com o time! 😉
+
 ---
 
 <div align="center">
-  <sub>✨ Documentação feita com carinho pela equipe Altime ✨</sub>
+  <sub>✨ Documentação feita com carinho pela equipe User-Standart! ✨</sub>
 </div>
