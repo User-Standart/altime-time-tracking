@@ -1,9 +1,10 @@
 # 📚 Bem-vindo ao Docs do Projeto Altime!
 
 Este repositório centraliza os materiais de apoio ao sistema Altime, desenvolvido para o controle de ponto de profissionais terceirizados.  
+
 Nele, você encontrará documentos essenciais para o uso e instalação do sistema.
 
-Documentação desenvolvida pelos alunos do 3º semestre do tecnólogo em Banco de Dados, na FATEC Profº Jessen Vidal – São José dos Campos, SP.
+Essa documentação foi desenvolvida pelos alunos do 3º semestre do tecnólogo em Banco de Dados, na FATEC Profº Jessen Vidal – São José dos Campos, SP.
 
 ---
 
