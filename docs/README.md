@@ -4,7 +4,7 @@ Este repositório centraliza os materiais de apoio ao sistema Altime, desenvolvi
 
 Nele, você encontrará documentos essenciais para o uso e instalação do sistema.
 
-+ Essa documentação foi desenvolvida pelos alunos do 3º semestre do tecnólogo em Banco de Dados, na FATEC Profº Jessen Vidal – São José dos Campos, SP.
+> Essa documentação foi desenvolvida pelos alunos do 3º semestre do tecnólogo em Banco de Dados, na FATEC Profº Jessen Vidal – São José dos Campos, SP.
 
 ---
 
