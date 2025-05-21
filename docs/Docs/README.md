@@ -30,10 +30,10 @@ Nele, você encontrará documentos essenciais para o uso e instalação do siste
 
 ## 🔗 Links rápidos
 
-- [Guia de instalação](https://github.com/User-Standart/User-Standart-docs/blob/main/Docs/Guia%20de%20Instalac%CC%A7a%CC%83o.pdf)
-- [Manual do usuário](https://github.com/User-Standart/User-Standart-docs/blob/main/Docs/Manual%20do%20Usuario.pdf)
-- [Vídeos das Sprints (Screencast)](https://github.com/User-Standart/User-Standart-docs/blob/main/Docs/Screencast%20from%202025-03-29%2021-02-48.zip)
-- [Vídeo demonstrativo (GIF)](https://github.com/User-Standart/User-Standart-docs/blob/main/Docs/tela%20login%202.gif)
+- [Guia de instalação](https://raw.githubusercontent.com/User-Standart/User-Standart-docs/main/Docs/Guia%20de%20Instalac%CC%A7a%CC%83o.pdf)
+- [Manual do usuário](https://raw.githubusercontent.com/User-Standart/User-Standart-docs/main/Docs/Manual%20do%20Usuario.pdf)
+- [Vídeos das Sprints (Screencast)](https://raw.githubusercontent.com/User-Standart/User-Standart-docs/main/Docs/Screencast%20from%202025-03-29%2021-02-48.zip)
+- [Vídeo demonstrativo (GIF)](https://raw.githubusercontent.com/User-Standart/User-Standart-docs/main/Docs/tela%20login%202.gif)
 
 ---
 
