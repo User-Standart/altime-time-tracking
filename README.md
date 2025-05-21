@@ -84,11 +84,11 @@ Como parte do planejamento do projeto foram criados wireframes para idealizaçã
 
 > 🔗 **Links gerais**  
 > - Documentação do software: [clique aqui para acessar](#)  
-> - Manual do usuário: [clique aqui para acessar](#)  
+> - Manual do usuário: [clique aqui para acessar](https://github.com/User-Standart/User-Standart-docs/blob/main/Manual_Usuario_Registro_Ponto.pdf)  
 > - Links para os repositórios criados:  
->    - **Frontend:** [acessar User-Standart-Frontend](#)  
+>    - **Frontend:** [acessar User-Standart-Frontend](https://github.com/User-Standart/User-Standart-Front/tree/main)  
 >    - **Backend:**  
->       - **Código:** [acessar User-Standart-Backend](#)  
+>       - **Código:** [acessar User-Standart-Backend](https://github.com/User-Standart/User-Standart-Back/tree/main)  
 > - Documentações das APIs:  
 >    - **Documentação Endpoint:** [acessar Swagger](#)  
 >    - **Guia de Usuário:** [acessar Guia de usuário](#)
