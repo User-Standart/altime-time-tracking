@@ -4,19 +4,19 @@ Este repositório centraliza os materiais de apoio ao sistema Altime, desenvolvi
 
 Nele, você encontrará documentos essenciais para o uso e instalação do sistema.
 
-Essa documentação foi desenvolvida pelos alunos do 3º semestre do tecnólogo em Banco de Dados, na FATEC Profº Jessen Vidal – São José dos Campos, SP.
++ Essa documentação foi desenvolvida pelos alunos do 3º semestre do tecnólogo em Banco de Dados, na FATEC Profº Jessen Vidal – São José dos Campos, SP.
 
 ---
 
 ## 📂 Conteúdo disponível
 
-| Arquivo                      | Descrição                      | Última Atualização  |
-|-----------------------------|-------------------------------|---------------------|
-| 📄 **Guia de Instalação.pdf**     | Passo a passo para instalar o sistema em qualquer ambiente. | 1 hour ago          |
-| 📄 **Manual do Usuário.pdf**       | Guia detalhado para os usuários aprenderem a usar o sistema. | 1 hour ago          |
-| 📝 **README.md**                   | Documento com informações gerais e atualizações da documentação. | 2 months ago        |
-| 🎥 **Screencast (2025-03-29).zip** | Vídeo demonstrativo do sistema em funcionamento.             | 2 months ago        |
-| 🎬 **tela login 2.gif**            | GIF animado mostrando a tela de login do sistema.             | -                   |
+| Arquivo                      | Descrição                      
+|-----------------------------|-------------------------------|
+| 📄 **Guia de Instalação.pdf**     | Passo a passo para instalar o sistema em qualquer ambiente. | 
+| 📄 **Manual do Usuário.pdf**       | Guia detalhado para os usuários aprenderem a usar o sistema. |
+| 📝 **README.md**                   | Documento com informações gerais e atualizações da documentação. | 
+| 🎥 **Screencast (2025-03-29).zip** | Vídeo demonstrativo do sistema em funcionamento.   |           
+| 🎬 **tela login 2.gif**            | GIF animado mostrando a tela de login do sistema.   |         
 
 ---
 
