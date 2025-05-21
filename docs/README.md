@@ -1,45 +1,43 @@
-# Manual do Usuário - Sistema de Registro de Ponto
+# 📚 Bem-vindo ao Docs do Projeto Altime!
 
-## 1. Introdução
-### 1.1 O que é o Sistema de Registro de Ponto?
-O Sistema de Registro de Ponto foi desenvolvido para facilitar o controle de horas trabalhadas por profissionais terceirizados em áreas de manutenção. Ele permite registrar entradas e saídas de forma eficiente, gerar relatórios detalhados e consultar informações de acordo com filtros personalizados.
+Seja muito bem-vindo à parte de **documentação** do nosso projeto! 🎉
 
-### 1.2 Objetivo do Manual
-Este manual tem como objetivo fornecer um guia completo para a utilização do sistema, cobrindo desde o cadastro de empresas e profissionais até a extração de relatórios e a consulta de registros.
+Aqui você vai encontrar todos os materiais importantes para entender, instalar, usar e acompanhar o desenvolvimento do sistema Altime.
 
-### 1.3 Público-Alvo
-O sistema é destinado a gestores, empresas e profissionais terceirizados que necessitam de um controle eficiente de seus horários de trabalho.
+---
 
-## 2. Acesso ao Sistema
-### 2.1 Requisitos de Acesso
-Para acessar o sistema, é necessário um navegador atualizado e conexão com a internet.
+## 📂 Conteúdo disponível
 
-### 2.2 Interface do Usuário
-O sistema apresenta uma interface intuitiva, permitindo a navegação por meio de um menu lateral que inclui as principais funcionalidades:
-- **Dashboard**
-- **Cadastro de Empresas**
-- **Cadastro de Profissionais**
-- **Registro de Ponto**
-- **Consulta de Registros**
-- **Relatórios**
+| Arquivo                      | Descrição                      | Última Atualização  |
+|-----------------------------|-------------------------------|---------------------|
+| 📄 **Guia de Instalação.pdf**     | Passo a passo para instalar o sistema em qualquer ambiente. | 1 hour ago          |
+| 📄 **Manual do Usuário.pdf**       | Guia detalhado para os usuários aprenderem a usar o sistema. | 1 hour ago          |
+| 📝 **README.md**                   | Documento com informações gerais e atualizações da documentação. | 2 months ago        |
+| 🎥 **Screencast (2025-03-29).zip** | Vídeo demonstrativo do sistema em funcionamento.             | 2 months ago        |
+| 🎬 **tela login 2.gif**            | GIF animado mostrando a tela de login do sistema.             | -                   |
 
-## 3. Funcionalidades Principais
-### 3.1 Cadastro de Empresas e Profissionais
-O sistema permite o cadastro de empresas e profissionais, incluindo informações essenciais como nome, CNPJ, cargo e foto do profissional.
+---
 
-### 3.2 Registro de Ponto
-O profissional pode registrar sua entrada e saída diretamente no sistema, garantindo um controle exato do tempo de trabalho.
+## 🚀 Como usar este módulo
 
-### 3.3 Consulta de Registros
-Os gestores podem consultar registros filtrando por empresa, profissional e período específico.
+- Confira os arquivos PDF para instalação e uso.
+- Assista ao vídeo demonstrativo para entender o fluxo do sistema na prática.
+- Acompanhe as atualizações do README para novidades e orientações.
 
-### 3.4 Extração de Relatórios
-O sistema permite a geração de relatórios detalhados em diferentes formatos para análise dos registros de ponto.
+---
 
-### 3.5 Dashboard Interativo
-A tela inicial do sistema fornece gráficos e estatísticas sobre o tempo trabalhado, facilitando a visualização dos dados.
+## 🔗 Links rápidos
 
-## 4. Suporte e Contato
-### 4.1 Informações de Contato
-Caso haja dúvidas ou problemas técnicos, entre em contato pelo repositório oficial:
-GitHub: [API-3SEM](https://github.com/User-Standart/API-3SEM/tree/Sprint-1)
+- [Guia de Instalação.pdf](./Guia%20de%20Instala%C3%A7%C3%A3o.pdf)
+- [Manual do Usuário.pdf](./Manual%20do%20Usuario.pdf)
+- [Vídeo demonstrativo (Screencast).zip](./Screencast%20from%202025-03-29%2021-02-48.zip)
+- [Tela login GIF](./tela%20login%202.gif)
+
+---
+
+Se tiver dúvidas ou sugestões, fique à vontade para abrir uma issue ou entrar em contato com o time! 😉
+---
+
+<div align="center">
+  <sub>✨ Documentação feita com carinho pela equipe Altime ✨</sub>
+</div>
