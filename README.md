@@ -1,55 +1,78 @@
-
 ![banner altime](https://github.com/user-attachments/assets/cd7c1e07-758d-4f80-8358-d3b2fc26554f)
 
-# Sistema de Registro de Ponto
+<div align="center">
 
-- 📘 [Tema e Descrição do Produto](#tema-e-descricao-do-produto)
-- ✅ [Requisitos Funcionais](#requisitos-funcionais)
-- ✅ [Requisitos Não Funcionais](#requisitos-nao-funcionais)
-- ✅ [Modelagem do Banco de Dados](#modelagem-do-banco-de-dados)
-- 🚀 [Como Executar o Projeto](#como-executar-o-projeto)
-- 🔗 [Links Importantes](#links-importantes)
-- 📝 [Documentação da Sprint](#documentação-da-sprint)
-- 👨‍💻 [Equipe](#equipe)
-- 🛠 [Tecnologias](#tecnologias)
+</div>
+
+<span id="topo">
+
+<h1 align="center">Sprint 3: 05/05/2025 a 25/05/2025</h1>
+
+<p align="center">
+    <a href="#objetivos">🎯 Objetivos da sprint</a> &nbsp |&nbsp &nbsp
+    <a href="#entregas">✅ Entregas</a> &nbsp |&nbsp &nbsp
+    <a href="#links">🔗 Links úteis</a>
+</p>
+
+Na 3ª Sprint, o foco principal do desenvolvimento do sistema Altime foi a consolidação das funcionalidades implementadas anteriormente, além da adição de novos recursos que ampliam a usabilidade da plataforma.
+
+Destacam-se o aprimoramento do sistema de relatórios, permitindo a extração de informações em formatos padronizados, a implementação de filtros avançados por data, empresa e profissional, e o fortalecimento da segurança e estabilidade da aplicação.
+
+Além disso, a equipe continuou evoluindo a interface do dashboard, tornando-a ainda mais interativa e responsiva, e realizou melhorias no backend para otimizar o desempenho e a manutenção do sistema.
+
+<span id="objetivos">
+
+## 🎯 Objetivos da Sprint
+
+| Rank | Requisito Funcional | User Story | Estimativa | Sprint | Critério de Aceitação |
+|------|---------------------|------------|------------|--------|----------------------|
+| 18   | RF6                 | Eu, enquanto gestor, quero poder gerar relatórios detalhados para analisar as horas trabalhadas pelos profissionais | 8h | 3 | O sistema deve permitir a geração de relatórios em formatos padronizados. |
+| 19   | RF7                 | Eu, enquanto usuário, quero filtrar registros de ponto por data, empresa e profissional para facilitar as consultas | 6h | 3 | O sistema deve permitir filtros avançados nas consultas de registros. |
+| 20   | RF8                 | Eu, enquanto usuário, quero que a interface do dashboard seja responsiva para acessar facilmente em diferentes dispositivos | 5h | 3 | O sistema deve adaptar o dashboard para dispositivos móveis e desktop. |
+| 21   | RNF5                | Eu, enquanto desenvolvedor, quero aprimorar a segurança e a estabilidade da aplicação para garantir seu funcionamento contínuo | 4h | 3 | O sistema deve seguir boas práticas de segurança e realizar validação de dados. |
+| 22   | RNF6                | Eu, enquanto desenvolvedor, quero otimizar o backend para melhorar o desempenho das consultas | 3h | 3 | O backend deve apresentar melhor desempenho e organização de código. |
+
+<span id="entregas">
+
+## ✅ Entregas
+
+Durante a 3ª Sprint, o protótipo visual previamente aprovado continuou servindo como referência para o desenvolvimento das novas funcionalidades. Com base na identidade visual já estabelecida no Figma, foram implementadas melhorias no sistema de relatórios, filtros avançados, otimização do backend e ajustes na responsividade do dashboard, mantendo a consistência visual e a usabilidade.
+
+### 📹 Veja abaixo o resultado final da entrega
+
+https://github.com/user-attachments/assets/cd7c1e07-758d-4f80-8358-d3b2fc26554f
+
+> Este protótipo valida a entrega dos requisitos confirmados para a sprint, onde suas descrições podem ser checadas a seguir
+
+<span id="requisitos">
+
+## 📋 Requisitos para a Sprint
+
+| Código   | Requisito                                           | Descrição |
+|----------|----------------------------------------------------|-----------|
+| **RF6**  | Geração de relatórios detalhados                   | Desenvolver funcionalidade para gerar relatórios de horas trabalhadas, com exportação em formatos padronizados. |
+| **RF7**  | Filtros avançados                                   | Implementar filtros por data, empresa e profissional para facilitar a consulta de registros de ponto. |
+| **RF8**  | Responsividade do dashboard                         | Ajustar o dashboard para garantir uma experiência adequada em dispositivos móveis e desktop. |
+| **RNF5** | Segurança e estabilidade                            | Aplicar boas práticas de segurança e validação de dados para aumentar a estabilidade da aplicação. |
+| **RNF6** | Otimização do backend                               | Refatorar e otimizar o backend, visando maior eficiência e desempenho nas consultas. |
+
+<span id="links">
+
+## 🔗 Links úteis
+
+- Tags geradas em cada repositório que simbolizam o fim da 3ª sprint:
+  - [Front-end - Sprint 3](https://github.com/User-Standart/User-Standart-Front/tree/Sprint-3)
+  - [Back-end - Sprint 3](https://github.com/User-Standart/User-Standart-Back/tree/Sprint-3)
 
 ---
 
-## 📘 Tema e Descricao do Produto
+## 🚀 Como Executar o Projeto
 
-Nosso projeto tem como objetivo o desenvolvimento de um **Sistema de Registro de Ponto** para controle eficiente das horas trabalhadas por profissionais terceirizados em uma determinada área de manutenção.
+### Backend (Spring Boot)
 
-O sistema permitirá:
-
-- Registro de entrada e saída de profissionais.
-- Geração de relatórios detalhados sobre horários trabalhados.
-- Consulta de dados por empresa, profissional e período específico.
-- Correção de registros errados.
-
-## ✅ Requisitos Funcionais
-
-- Interface para cadastro de empresas e profissionais (incluindo foto).
-- Filtragem de registros por data, empresa e profissional.
-- Extração de relatórios em formatos padronizados.
-- Dashboard interativo com gráficos e opções de filtragem.
-- API para consumo dos dados (opcional).
-
-## ✅ Requisitos Não Funcionais
-
-- Interface minimalista e intuitiva.
-- Guia de instalação do sistema.
-- Documentação da API.
-- Modelagem de Banco de Dados otimizada.
-
-## ✅ Modelagem do Banco de Dados
-
-A modelagem do banco de dados incluirá:
-- Tabelas de empresas e profissionais.
-- Tabelas de registros de ponto.
-- Índices para otimizar buscas.
-- Relacionamentos bem estruturados.
-
----
+```bash
+cd backend
+./mvnw spring-boot:run
 
 ## 🚀 Como Executar o Projeto
 
@@ -86,31 +109,3 @@ npm run dev
 
 - 📄 [Página Sprint 01](docs/sprint01.md)
 - 📌 [Product Backlog](docs/backlog.md)
-
----
-
-## 📸 Conheça nossa equipe:
-
-| Nome | Função | LinkedIn | GitHub |
-|------|--------|----------|--------|
-| **Caio Osório** | PO | [LinkedIn](https://www.linkedin.com/in/caio-o-a67224200/) | [GitHub](https://github.com/User-Business) |
-| **Gleialison Rezende** | SM | [LinkedIn](https://www.linkedin.com/in/gleialison-rezende-835453b0/) | [GitHub](https://github.com/Glei-Rezende) |
-| **Beatriz Santos** | DEV | [LinkedIn](https://www.linkedin.com/in/beatriz-santos-0b6773220/) | [GitHub](https://github.com/BeatrizSantos00) |
-| **Rafael Slivka** | DEV | [LinkedIn](https://www.linkedin.com/in/rafael-lopes-slivka-07753326a/) | [GitHub](https://github.com/rafaslivka) |
-| **Tiago Bernardo** | DEV | [LinkedIn](https://www.linkedin.com/in/tiagobernardosantos/) | [GitHub](https://github.com/TiagoBernardoSantos) |
-| **Victor Ryan** | DEV | [LinkedIn](https://www.linkedin.com/in/victor-ryan-51738b261) | [GitHub](https://github.com/yzvictorr) |
-
----
-
-## 🛠 Tecnologias
-
-![Java](https://img.shields.io/badge/Java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-%2300758F.svg?style=for-the-badge&logo=mysql&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
-![React](https://img.shields.io/badge/React-%2361DAFB.svg?style=for-the-badge&logo=react&logoColor=black)
-![Docker](https://img.shields.io/badge/Docker-%230087C6.svg?style=for-the-badge&logo=docker&logoColor=white)
-![Swagger](https://img.shields.io/badge/Swagger-%2385EA2D.svg?style=for-the-badge&logo=swagger&logoColor=black)
-
----
-
-> O projeto está em desenvolvimento e contará com entregas contínuas conforme o progresso da equipe.
