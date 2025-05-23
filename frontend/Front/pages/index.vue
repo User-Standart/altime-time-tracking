@@ -1,206 +1,170 @@
-<script setup>
-definePageMeta({
-  middleware: 'auth',
-})
-import { ref, onMounted, watch } from "vue";
-import { Chart, registerables } from "chart.js";
-import { getFuncionariosPorEmpresa } from "@/services/api"; // ajuste o caminho conforme seu projeto
-Chart.register(...registerables);
+<template>
+  <div class="flex flex-wrap gap-6 justify-center p-6">
+    <!-- Gráfico de Funcionários por Empresa -->
+    <UCard class="w-full md:w-[500px]">
+      <template #header>
+        <h2 class="text-lg font-medium text-center">Funcionários por Empresa</h2>
+      </template>
 
-// Referências dos canvas
-const pieChart = ref(null);
-const lineChart = ref(null);
-const barChart = ref(null);
+      <div class="h-[300px]">
+        <canvas ref="pieChart"></canvas>
+      </div>
+    </UCard>
 
-// Filtros
-const empresas = ref([]);
-const funcionariosPorEmpresa = ref({});
-const empresaSelecionada = ref("");
-const funcionarioSelecionado = ref("");
-const funcionariosFiltrados = ref([]);
+    <!-- Gráfico de Horas por Profissional -->
+    <UCard class="w-full md:w-[600px]">
+      <template #header>
+        <h2 class="text-lg font-medium text-center">Horas por Profissional</h2>
+      </template>
 
-// Atualiza lista de funcionários ao mudar empresa
+      <!-- Filtros -->
+      <div class="flex flex-wrap items-center gap-4">
+        <USelect
+          v-model="empresaSelecionada"
+          :options="empresas"
+          placeholder="Selecione uma empresa"
+          class="flex-1"
+        />
+        <USelect
+          v-model="funcionarioSelecionado"
+          :options="funcionariosFiltrados"
+          placeholder="Selecione um funcionário"
+          :disabled="!empresaSelecionada"
+          class="flex-1"
+        />
+        <UButton color="blue" @click="atualizarGraficoFiltrado">
+          Filtrar
+        </UButton>
+      </div>
+
+      <div v-if="empresaSelecionada && funcionariosFiltrados.length === 0" class="text-center text-red-500 mt-4">
+        Nenhum funcionário encontrado para esta empresa.
+      </div>
+
+      <div v-else class="h-[300px] mt-4">
+        <canvas ref="barChart"></canvas>
+      </div>
+    </UCard>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch, onMounted } from 'vue'
+import { Chart, registerables } from 'chart.js'
+import { getFuncionariosPorEmpresa } from '@/services/api'
+
+Chart.register(...registerables)
+
+const pieChart = ref<HTMLCanvasElement | null>(null)
+const barChart = ref<HTMLCanvasElement | null>(null)
+
+const empresas = ref<string[]>([])
+const funcionariosPorEmpresa = ref<Record<string, string[]>>({})
+const empresaSelecionada = ref('')
+const funcionarioSelecionado = ref('')
+const funcionariosFiltrados = ref<string[]>([])
+
 watch(empresaSelecionada, () => {
-  funcionarioSelecionado.value = "";
-  funcionariosFiltrados.value = funcionariosPorEmpresa.value[empresaSelecionada.value] || [];
-});
+  funcionarioSelecionado.value = ''
+  funcionariosFiltrados.value = funcionariosPorEmpresa.value[empresaSelecionada.value] || []
+})
 
-// Atualiza gráfico de barras com base no filtro
+// Gráfico de Barras
 const atualizarGraficoFiltrado = () => {
-  if (!barChart.value) return;
-  const chartInstance = Chart.getChart(barChart.value);
-  if (chartInstance) chartInstance.destroy();
+  if (!barChart.value) return
+  const chartInstance = Chart.getChart(barChart.value)
+  if (chartInstance) chartInstance.destroy()
 
   const funcionariosData = empresaSelecionada.value
     ? funcionariosPorEmpresa.value[empresaSelecionada.value]
-    : [];
-  
-  const labels = funcionarioSelecionado.value
-    ? [funcionarioSelecionado.value]  // Se funcionário for selecionado, mostra só ele
-    : funcionariosData;               // Se não, mostra todos os funcionários da empresa
+    : []
 
-  const data = funcionarioSelecionado.value
-    ? [Math.floor(Math.random() * 10)]  // Dado aleatório para o funcionário selecionado
-    : funcionariosData.map(() => Math.floor(Math.random() * 10));  // Dados aleatórios para todos os funcionários
+  if (!funcionariosData || funcionariosData.length === 0) {
+    return
+  }
+
+  const labels = funcionarioSelecionado.value
+    ? [funcionarioSelecionado.value]
+    : funcionariosData
+
+  const data = labels.map(() => Math.floor(Math.random() * 8 + 1)) // Simula 1 a 8 horas
 
   new Chart(barChart.value, {
-    type: "bar",
+    type: 'bar',
     data: {
       labels: labels,
       datasets: [
         {
-          label: "Horas por Profissional",
+          label: 'Horas por Profissional',
           data: data,
-          backgroundColor: "rgba(54, 162, 235, 0.5)",
+          backgroundColor: 'rgba(37, 99, 235, 0.8)',
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1,
+          },
+        },
+      },
     },
-  });
-};
+  })
+}
 
-// Função nova: carregar Funcionários por Empresa
+// Gráfico de Pizza
 const carregarFuncionariosPorEmpresa = async () => {
   try {
-    const response = await getFuncionariosPorEmpresa();
-    const dados = response.data;
+    const response = await getFuncionariosPorEmpresa()
+    const dados = response.data
 
-    empresas.value = Object.keys(dados);
-    funcionariosPorEmpresa.value = dados;
+    empresas.value = Object.keys(dados)
+    funcionariosPorEmpresa.value = dados
 
     if (pieChart.value) {
-      const chartInstance = Chart.getChart(pieChart.value);
-      if (chartInstance) chartInstance.destroy();
+      const chartInstance = Chart.getChart(pieChart.value)
+      if (chartInstance) chartInstance.destroy()
     }
 
     new Chart(pieChart.value, {
-      type: "pie",
+      type: 'pie',
       data: {
         labels: empresas.value,
         datasets: [
           {
-            label: "Funcionários",
-            data: Object.values(dados),
+            label: 'Funcionários',
+            data: Object.values(dados).map(item => item.length || 0),
             backgroundColor: [
-              "rgba(255, 99, 132, 0.5)",
-              "rgba(54, 162, 235, 0.5)",
-              "rgba(255, 206, 86, 0.5)",
-              "rgba(75, 192, 192, 0.5)",
-              "rgba(153, 102, 255, 0.5)",
-              "rgba(255, 159, 64, 0.5)"
-            ]
-          }
-        ]
+              '#ef4444',
+              '#3b82f6',
+              '#10b981',
+              '#f59e0b',
+              '#8b5cf6',
+              '#ec4899',
+            ],
+          },
+        ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-      }
-    });
+      },
+    })
   } catch (error) {
-    console.error("Erro ao carregar funcionários por empresa:", error);
+    console.error('Erro ao carregar funcionários por empresa:', error)
   }
-};
+}
 
 onMounted(() => {
-  carregarFuncionariosPorEmpresa(); // Chama API para montar o gráfico dinâmico
-
-  // Linha: Profissionais por dia (mantido como estava)
-  new Chart(lineChart.value, {
-    type: "line",
-    data: {
-      labels: ["Seg", "Ter", "Qua", "Qui", "Sex"],
-      datasets: [
-        {
-          label: "Profissionais por Dia",
-          data: [10, 12, 8, 15, 9],
-          fill: false,
-          borderColor: "rgba(54, 162, 235, 1)",
-          backgroundColor: "rgba(54, 162, 235, 0.5)",
-          tension: 0.3,
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-    }
-  });
-});
+  carregarFuncionariosPorEmpresa()
+})
 </script>
-<template>
-  <div class="charts-wrapper">
-    <div class="chart-container">
-      <h2>Funcionários por Empresa</h2>
-      <canvas ref="pieChart"></canvas>
-    </div>
-
-    <div class="chart-container">
-      <h2>Registros de Profissionais por Dia</h2>
-      <canvas ref="lineChart"></canvas>
-    </div>
-
-    <div class="chart-container">
-      <h2>Horas por Profissional</h2>
-      <div class="filters">
-        <select v-model="empresaSelecionada">
-          <option disabled value="">Selecione uma empresa</option>
-          <option v-for="empresa in empresas" :key="empresa">{{ empresa }}</option>
-        </select>
-
-        <select v-model="funcionarioSelecionado" :disabled="!empresaSelecionada">
-          <option disabled value="">Selecione um funcionário</option>
-          <option v-for="func in funcionariosFiltrados" :key="func">{{ func }}</option>
-        </select>
-
-        <button @click="atualizarGraficoFiltrado">Filtrar</button>
-      </div>
-      <canvas ref="barChart"></canvas>
-    </div>
-  </div>
-</template>
-
-<style scoped>
-.charts-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem;
-}
-
-.chart-container {
-  width: 40%;
-  height: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #f9f9f9;
-  border-radius: 1rem;
-  padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.filters {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-select, button {
-  padding: 0.3rem 0.6rem;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-button {
-  background-color: #3b82f6;
-  color: white;
-  cursor: pointer;
-}
-</style>

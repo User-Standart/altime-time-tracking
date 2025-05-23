@@ -130,16 +130,83 @@ function confirmarExclusao() {
     cancelarExclusao()
   }
 }
+
+// FUNÇÕES DE EXPORTAÇÃO
+
+function exportarCSV() {
+  const headers = ['Empresa', 'Funcionário', 'Dia Trabalhado', 'Horário Entrada', 'Horário Saída', 'Observações']
+  const rows = registrosFiltrados.value.map(reg => [
+    reg.empresa, reg.funcionario, reg.diaTrabalhado,
+    reg.horarioEntrada, reg.horarioSaida, reg.observacoes
+  ])
+  const csvContent = [headers, ...rows]
+    .map(e => e.map(v => `"${v}"`).join(','))
+    .join('\n')
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.setAttribute('href', url)
+  link.setAttribute('download', 'registros.csv')
+  link.click()
+}
+
+function exportarPDF() {
+  const janela = window.open('', '', 'width=800,height=600')
+  if (janela) {
+    const tabelaHtml = `
+      <h2>Registros de Ponto</h2>
+      <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+        <thead>
+          <tr>
+            <th>Empresa</th>
+            <th>Funcionário</th>
+            <th>Dia</th>
+            <th>Entrada</th>
+            <th>Saída</th>
+            <th>Observações</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${registrosFiltrados.value.map(r => `
+            <tr>
+              <td>${r.empresa}</td>
+              <td>${r.funcionario}</td>
+              <td>${r.diaTrabalhado}</td>
+              <td>${r.horarioEntrada}</td>
+              <td>${r.horarioSaida}</td>
+              <td>${r.observacoes}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `
+    janela.document.write(`
+      <html>
+        <head><title>Registros de Ponto</title></head>
+        <body>${tabelaHtml}</body>
+      </html>
+    `)
+    janela.document.close()
+    janela.print()
+  }
+}
 </script>
 
 <template>
   <div class="grid justify-items-center">
     <UCard class="w-11/12 md:w-4/5">
       <template #header>
-        <div class="flex justify-between items-center w-full">
+        <div class="flex justify-between items-center w-full flex-wrap gap-2">
           <h2 class="text-xl font-bold">Registros de Ponto</h2>
-          <div class="flex gap-2">
+          <div class="flex gap-2 flex-wrap">
             <UButton color="primary" @click="abrirModalParaCadastro">Novo Registro</UButton>
+            <UButton color="white" @click="exportarCSV" icon="heroicons:arrow-down-tray">
+              Exportar CSV
+            </UButton>
+            <UButton color="white" @click="exportarPDF" icon="heroicons:arrow-down-tray">
+              Exportar PDF
+            </UButton>
             <UPopover>
               <UButton icon="heroicons:funnel-solid" />
               <template #panel>
@@ -226,7 +293,6 @@ function confirmarExclusao() {
         </template>
         <div class="space-y-2">
           <p>Deseja excluir o registro de <strong>{{ registroParaExcluir?.funcionario }}</strong> no dia <strong>{{ registroParaExcluir?.diaTrabalhado }}</strong>?</p>
-          <p class="text-sm text-gray-500">Esta ação não poderá ser desfeita.</p>
         </div>
         <template #footer>
           <div class="flex justify-end gap-2">
