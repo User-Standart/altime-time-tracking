@@ -59,6 +59,35 @@ const registrosPaginados = computed(() => {
   return registrosFiltrados.value.slice(start, start + pageSize)
 })
 
+// ESTADO DOS CHECKBOXES (IDs selecionados)
+const selecionados = ref<Set<number>>(new Set())
+
+// Função para alternar seleção ao clicar no checkbox
+function toggleSelecionado(id: number) {
+  if (selecionados.value.has(id)) {
+    selecionados.value.delete(id)
+  } else {
+    selecionados.value.add(id)
+  }
+  // Para reatividade:
+  selecionados.value = new Set(selecionados.value)
+}
+
+// Função para selecionar/deselecionar todos visíveis na página
+function toggleSelecionarTodos(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.checked) {
+    registrosPaginados.value.forEach(r => selecionados.value.add(r.id))
+  } else {
+    registrosPaginados.value.forEach(r => selecionados.value.delete(r.id))
+  }
+  selecionados.value = new Set(selecionados.value)
+}
+
+function todosSelecionadosNaPagina() {
+  return registrosPaginados.value.every(r => selecionados.value.has(r.id)) && registrosPaginados.value.length > 0
+}
+
 // MODAL DE CADASTRO/EDIÇÃO
 const modalAberto = ref(false)
 const registroEditando = reactive<Partial<RegistroPonto>>({})
@@ -134,8 +163,13 @@ function confirmarExclusao() {
 // FUNÇÕES DE EXPORTAÇÃO
 
 function exportarCSV() {
+  // Se tiver selecionados, exporta só eles. Senão, exporta todos filtrados.
+  const paraExportar = selecionados.value.size > 0
+    ? registros.value.filter(r => selecionados.value.has(r.id))
+    : registrosFiltrados.value
+
   const headers = ['Empresa', 'Funcionário', 'Dia Trabalhado', 'Horário Entrada', 'Horário Saída', 'Observações']
-  const rows = registrosFiltrados.value.map(reg => [
+  const rows = paraExportar.map(reg => [
     reg.empresa, reg.funcionario, reg.diaTrabalhado,
     reg.horarioEntrada, reg.horarioSaida, reg.observacoes
   ])
@@ -152,6 +186,10 @@ function exportarCSV() {
 }
 
 function exportarPDF() {
+  const paraExportar = selecionados.value.size > 0
+    ? registros.value.filter(r => selecionados.value.has(r.id))
+    : registrosFiltrados.value
+
   const janela = window.open('', '', 'width=800,height=600')
   if (janela) {
     const tabelaHtml = `
@@ -168,7 +206,7 @@ function exportarPDF() {
           </tr>
         </thead>
         <tbody>
-          ${registrosFiltrados.value.map(r => `
+          ${paraExportar.map(r => `
             <tr>
               <td>${r.empresa}</td>
               <td>${r.funcionario}</td>
@@ -224,6 +262,14 @@ function exportarPDF() {
       <table class="w-full border-collapse border border-gray-300 dark:border-gray-600 mt-4">
         <thead>
           <tr class="bg-gray-100 dark:bg-gray-800 text-center">
+            <th>
+              <input
+                type="checkbox"
+                :checked="todosSelecionadosNaPagina()"
+                @change="toggleSelecionarTodos"
+                aria-label="Selecionar todos"
+              />
+            </th>
             <th>Empresa</th>
             <th>Funcionário</th>
             <th>Dia</th>
@@ -239,6 +285,14 @@ function exportarPDF() {
             :key="registro.id"
             class="text-center"
           >
+            <td>
+              <input
+                type="checkbox"
+                :checked="selecionados.has(registro.id)"
+                @change="() => toggleSelecionado(registro.id)"
+                aria-label="Selecionar registro"
+              />
+            </td>
             <td>{{ registro.empresa }}</td>
             <td>{{ registro.funcionario }}</td>
             <td>{{ registro.diaTrabalhado }}</td>
@@ -278,26 +332,26 @@ function exportarPDF() {
         </div>
         <template #footer>
           <div class="flex justify-end gap-2">
-            <UButton @click="fecharModal" color="gray">Cancelar</UButton>
-            <UButton @click="salvarCadastro" color="primary">Salvar</UButton>
+            <UButton color="gray" @click="fecharModal">Cancelar</UButton>
+            <UButton color="primary" @click="salvarCadastro">Salvar</UButton>
           </div>
         </template>
       </UCard>
     </UModal>
 
-    <!-- Modal de Confirmação de Exclusão -->
+    <!-- Modal de Exclusão -->
     <UModal v-model="confirmarExclusaoAberto">
       <UCard class="w-full max-w-2xl mx-auto">
         <template #header>
-          <h2 class="text-lg font-bold text-red-600">Confirmar Exclusão</h2>
+          <h2 class="text-lg font-bold">Confirmar Exclusão</h2>
         </template>
-        <div class="space-y-2">
-          <p>Deseja excluir o registro de <strong>{{ registroParaExcluir?.funcionario }}</strong> no dia <strong>{{ registroParaExcluir?.diaTrabalhado }}</strong>?</p>
+        <div class="py-4">
+          <p>Tem certeza que deseja excluir o registro de <strong>{{ registroParaExcluir?.funcionario }}</strong> do dia <strong>{{ registroParaExcluir?.diaTrabalhado }}</strong>?</p>
         </div>
         <template #footer>
           <div class="flex justify-end gap-2">
-            <UButton @click="cancelarExclusao" color="gray">Cancelar</UButton>
-            <UButton @click="confirmarExclusao" color="red">Excluir</UButton>
+            <UButton color="gray" @click="cancelarExclusao">Cancelar</UButton>
+            <UButton color="red" @click="confirmarExclusao">Excluir</UButton>
           </div>
         </template>
       </UCard>
