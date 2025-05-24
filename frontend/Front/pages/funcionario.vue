@@ -7,21 +7,20 @@ import { useToast } from '#imports';
 import { cadastrarFuncionario, uploadImagemFuncionario } from '@/services/api';
 
 const funcionarios = ref<any[]>([]);
+const empresas = ref<any[]>([]);
 const funcionariosSelecionados = ref<any[]>([]);
 const termoPesquisa = ref('');
 const filtroSelecionado = ref('nome');
 const currentPage = ref(1);
 const pageSize = 10;
 
-
 const options = [
   { value: 'nome', label: 'Nome' },
   { value: 'cpf', label: 'CPF' },
   { value: 'empresa', label: 'Empresa' },
-  { value: 'funcao', label: 'Função' }
+  { value: 'cargo', label: 'Cargo' }
 ];
 
-// Cadastro modal
 const modalAberto = ref(false);
 const funcionario = ref({
   id: null,
@@ -29,16 +28,15 @@ const funcionario = ref({
   cpf: '',
   empresa: '',
   cargaHoraria: '',
-  funcao: '',
+  cargo: '',
   email: '',
   foto: null as File | null,
   fotoUrl: ''
 });
+
 const toast = useToast();
 
-const abrirModal = () => {
-  modalAberto.value = true;
-};
+const abrirModal = () => { modalAberto.value = true; };
 
 const fecharModal = () => {
   modalAberto.value = false;
@@ -48,13 +46,12 @@ const fecharModal = () => {
     cpf: '',
     empresa: '',
     cargaHoraria: '',
-    funcao: '',
+    cargo: '',
     email: '',
     foto: null,
     fotoUrl: ''
   };
 };
-
 
 const editarFuncionario = (f: any) => {
   funcionario.value = {
@@ -63,14 +60,13 @@ const editarFuncionario = (f: any) => {
     cpf: f.cpf || '',
     empresa: f.empresa || '',
     cargaHoraria: f.cargaHoraria || '',
-    funcao: f.funcao || '',
+    cargo: f.cargo || '',
     email: f.email || '',
     foto: null,
     fotoUrl: formatarURLImagem(f.imagem)
   };
   modalAberto.value = true;
 };
-
 
 const fetchFuncionarios = async () => {
   try {
@@ -80,7 +76,20 @@ const fetchFuncionarios = async () => {
     console.error('Erro ao carregar os funcionários', error);
   }
 };
-onMounted(fetchFuncionarios);
+
+const fetchEmpresas = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/empresas');
+    empresas.value = response.data;
+  } catch (error) {
+    console.error('Erro ao carregar empresas', error);
+  }
+};
+
+onMounted(() => {
+  fetchFuncionarios();
+  fetchEmpresas();
+});
 
 const formatarURLImagem = (caminhoRelativo: string) => {
   if (!caminhoRelativo) return '';
@@ -97,7 +106,7 @@ const salvarCadastro = async () => {
         cpf: funcionario.value.cpf,
         empresa: funcionario.value.empresa,
         cargaHoraria: funcionario.value.cargaHoraria,
-        funcao: funcionario.value.funcao,
+        cargo: funcionario.value.cargo,
         email: funcionario.value.email,
       });
     } else {
@@ -106,7 +115,7 @@ const salvarCadastro = async () => {
         cpf: funcionario.value.cpf,
         empresa: funcionario.value.empresa,
         cargaHoraria: funcionario.value.cargaHoraria,
-        funcao: funcionario.value.funcao,
+        cargo: funcionario.value.cargo,
         email: funcionario.value.email,
       });
     }
@@ -134,11 +143,10 @@ const salvarCadastro = async () => {
       title: 'Erro ao salvar',
       icon: 'i-heroicons-x-circle',
       timeout: 6000,
-      color: 'red' 
+      color: 'red'
     });
   }
 };
-
 
 const handleFileUpload = (event: Event) => {
   const input = event.target as HTMLInputElement;
@@ -182,7 +190,7 @@ const exportToPDF = () => {
   doc.setFontSize(12);
   doc.text('Relatório de Funcionários', 14, 20);
   let y = 30;
-  const headers = ['Nome', 'CPF', 'Empresa', 'Função', 'E-mail'];
+  const headers = ['Nome', 'CPF', 'Empresa', 'Cargo', 'E-mail'];
   headers.forEach((header, i) => {
     doc.text(header, 14 + i * 30, y);
   });
@@ -191,15 +199,12 @@ const exportToPDF = () => {
     doc.text(f.nome || '', 14, y);
     doc.text(f.cpf || '', 44, y);
     doc.text(f.empresa || '', 74, y);
-    doc.text(f.funcao || '', 104, y);
+    doc.text(f.cargo || '', 104, y);
     doc.text(f.email || '', 134, y);
     y += 10;
   }
   doc.save('relatorio_funcionarios.pdf');
 };
-
-const page = currentPage;
-const items = computed(() => funcionariosFiltrados.value);
 </script>
 
 <template>
@@ -210,15 +215,12 @@ const items = computed(() => funcionariosFiltrados.value);
           <h2 class="text-xl font-bold">Funcionários</h2>
           <div class="flex gap-2 flex-wrap">
             <UButton color="primary" @click="abrirModal">Cadastrar Funcionário</UButton>
-
             <UButton color="white" icon="heroicons:arrow-down-tray" @click="exportToCSV">
               Exportar CSV
             </UButton>
-
             <UButton color="white" icon="heroicons:arrow-down-tray" @click="exportToPDF">
               Exportar PDF
             </UButton>
-
             <UPopover>
               <UButton icon="heroicons:funnel-solid" />
               <template #panel>
@@ -231,29 +233,32 @@ const items = computed(() => funcionariosFiltrados.value);
         </div>
       </template>
 
-
       <UInput v-model="termoPesquisa" placeholder="Digite para filtrar" class="mt-2" />
 
       <table class="w-full border-collapse border border-gray-300 dark:border-gray-600 mt-4">
-         <thead>
+        <thead>
           <tr class="bg-gray-100 dark:bg-gray-800">
             <th></th>
             <th class="text-center">Foto</th>
             <th class="text-center">Nome</th>
             <th class="text-center">CPF</th>
             <th class="text-center">Empresa</th>
-            <th class="text-center">Função</th>
+            <th class="text-center">Cargo</th>
             <th class="text-center">Ações</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(funcionario, index) in funcionariosPaginados" :key="index" class="hover:bg-gray-50 hover:dark:bg-gray-800">
-            <td class="text-center"><input type="checkbox" v-model="funcionariosSelecionados" :value="funcionario" /></td>
-            <td class="text-center"><img :src="formatarURLImagem(funcionario.imagem)" alt="Foto" class="w-12 h-12 rounded-full object-cover" /></td>
+            <td class="text-center">
+              <input type="checkbox" v-model="funcionariosSelecionados" :value="funcionario" />
+            </td>
+            <td class="text-center">
+              <img :src="formatarURLImagem(funcionario.imagem)" alt="Foto" class="w-12 h-12 rounded-full object-cover" />
+            </td>
             <td>{{ funcionario.nome }}</td>
             <td>{{ funcionario.cpf }}</td>
             <td>{{ funcionario.empresa }}</td>
-            <td>{{ funcionario.funcao }}</td>
+            <td>{{ funcionario.cargo }}</td>
             <td class="text-center">
               <UButton icon="heroicons:pencil-square" color="primary" variant="ghost" @click="editarFuncionario(funcionario)" />
             </td>
@@ -262,7 +267,7 @@ const items = computed(() => funcionariosFiltrados.value);
       </table>
 
       <div class="flex justify-end mt-4">
-        <UPagination v-model="page" :page-count="pageSize" :total="items.length" />
+        <UPagination v-model="currentPage" :page-count="pageSize" :total="funcionariosFiltrados.length" />
       </div>
     </UCard>
 
@@ -271,20 +276,31 @@ const items = computed(() => funcionariosFiltrados.value);
         <template #header>
           <h2 class="text-lg font-bold">Cadastro de Funcionário</h2>
         </template>
-        <div class="grid justify-items-center">
+
+        <div class="grid gap-4">
           <UFormGroup label="Foto">
-          <input type="file" @change="handleFileUpload" accept="image/png, image/jpeg" />
-          <div v-if="funcionario.fotoUrl" class="flex justify-center mt-2">
-          <img :src="funcionario.fotoUrl" class="w-24 h-24 rounded-full object-cover" /></div>
+            <input type="file" @change="handleFileUpload" accept="image/png, image/jpeg" />
+            <div v-if="funcionario.fotoUrl" class="flex justify-center mt-2">
+              <img :src="funcionario.fotoUrl" class="w-24 h-24 rounded-full object-cover" />
+            </div>
+          </UFormGroup>
+
           <UFormGroup label="Nome"><UInput v-model="funcionario.nome" /></UFormGroup>
           <UFormGroup label="CPF"><UInput v-model="funcionario.cpf" /></UFormGroup>
-          <UFormGroup label="Empresa"><UInput v-model="funcionario.empresa" /></UFormGroup>
-          <UFormGroup label="Carga Horária"><UInput v-model="funcionario.cargaHoraria" /></UFormGroup>
-          <UFormGroup label="Função"><UInput v-model="funcionario.funcao" /></UFormGroup>
-          <UFormGroup label="Email"><UInput v-model="funcionario.email" /></UFormGroup>
-            
+
+          <UFormGroup label="Empresa">
+            <USelect
+              v-model="funcionario.empresa"
+              :options="empresas.map(e => ({ label: e.nome, value: e.nome }))"
+              placeholder="Selecione uma empresa"
+            />
           </UFormGroup>
+
+          <UFormGroup label="Carga Horária"><UInput v-model="funcionario.cargaHoraria" /></UFormGroup>
+          <UFormGroup label="Cargo"><UInput v-model="funcionario.cargo" /></UFormGroup>
+          <UFormGroup label="Email"><UInput v-model="funcionario.email" /></UFormGroup>
         </div>
+
         <template #footer>
           <div class="flex justify-end gap-2">
             <UButton @click="fecharModal" color="gray">Cancelar</UButton>
