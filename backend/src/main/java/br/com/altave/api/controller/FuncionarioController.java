@@ -41,11 +41,12 @@ public class FuncionarioController {
             @ApiResponse(responseCode = "404", description = "Nenhum funcionário encontrado.")
     })
     @GetMapping
-    public List<Funcionario> listarTodos() {
-        return service.listarTodos();
+    public ResponseEntity<List<Funcionario>> listarTodos() {
+        List<Funcionario> funcionarios = service.listarTodos();
+        return !funcionarios.isEmpty() ? ResponseEntity.ok(funcionarios) : ResponseEntity.notFound().build();
     }
 
-    @Operation(description = "Busca um funcionário específico pelo ID e retorna seus dados.")
+    @Operation(description = "Busca um funcionário específico pelo ID e retorna seus dados completos.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Funcionário encontrado e retornado com sucesso."),
             @ApiResponse(responseCode = "404", description = "Funcionário não encontrado.")
@@ -54,7 +55,7 @@ public class FuncionarioController {
     public ResponseEntity<Funcionario> buscarPorId(@PathVariable Integer id) {
         return service.buscarPorId(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(description = "Cria um novo funcionário com os dados fornecidos.")
@@ -63,8 +64,9 @@ public class FuncionarioController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos para criação do funcionário.")
     })
     @PostMapping
-    public Funcionario salvar(@RequestBody Funcionario funcionario) {
-        return service.salvar(funcionario);
+    public ResponseEntity<Funcionario> salvar(@RequestBody Funcionario funcionario) {
+        Funcionario salvo = service.salvar(funcionario);
+        return ResponseEntity.status(201).body(salvo);
     }
 
     @Operation(description = "Atualiza os dados de um funcionário existente pelo ID.")
@@ -74,7 +76,9 @@ public class FuncionarioController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos para atualização.")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Funcionario> atualizar(@PathVariable Integer id, @RequestBody Funcionario funcionarioAtualizado) {
+    public ResponseEntity<Funcionario> atualizar(
+            @PathVariable Integer id,
+            @RequestBody Funcionario funcionarioAtualizado) {
         return service.atualizar(id, funcionarioAtualizado)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -98,7 +102,9 @@ public class FuncionarioController {
             @ApiResponse(responseCode = "500", description = "Erro interno ao salvar a imagem.")
     })
     @PostMapping("/{id}/imagem")
-    public ResponseEntity<String> uploadImagem(@PathVariable Integer id, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadImagem(
+            @PathVariable Integer id,
+            @RequestParam("file") MultipartFile file) {
         String imageUrl = service.salvarImagem(id, file);
         if (imageUrl != null) {
             return ResponseEntity.ok("Imagem salva com sucesso: " + imageUrl);
@@ -116,10 +122,7 @@ public class FuncionarioController {
     public ResponseEntity<String> getImagem(@PathVariable Integer id) {
         try {
             String imageUrl = service.recuperarImagem(id);
-            if (imageUrl != null) {
-                return ResponseEntity.ok(imageUrl);
-            }
-            return ResponseEntity.notFound().build();
+            return imageUrl != null ? ResponseEntity.ok(imageUrl) : ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }
@@ -149,6 +152,4 @@ public class FuncionarioController {
         Map<String, Long> dados = service.getFuncionariosPorEmpresa();
         return ResponseEntity.ok(dados);
     }
-
-    
 }
