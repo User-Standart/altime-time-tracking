@@ -14,7 +14,7 @@
     <!-- Gráfico de Horas por Profissional -->
     <UCard class="w-full md:w-[600px]">
       <template #header>
-        <h2 class="text-lg font-medium text-center">Horas por Profissional</h2>
+        <h2 class="text-lg font-medium text-center">Horas por Funcionário</h2>
       </template>
 
       <!-- Filtros -->
@@ -95,7 +95,7 @@ const atualizarGraficoFiltrado = () => {
       labels: labels,
       datasets: [
         {
-          label: 'Horas por Profissional',
+          label: 'Horas por Funcionário',
           data: data,
           backgroundColor: 'rgba(37, 99, 235, 0.8)',
         },

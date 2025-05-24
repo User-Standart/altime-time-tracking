@@ -18,24 +18,6 @@ const paginaAtual = ref(1)
 const pageSize = 5
 
 const registros = ref<RegistroPonto[]>([
-  {
-    id: 1,
-    empresa: 'Empresa A',
-    funcionario: 'João',
-    diaTrabalhado: '2025-05-15',
-    horarioEntrada: '08:00',
-    horarioSaida: '17:00',
-    observacoes: 'Nenhuma'
-  },
-  {
-    id: 2,
-    empresa: 'Empresa B',
-    funcionario: 'Maria',
-    diaTrabalhado: '2025-05-14',
-    horarioEntrada: '09:00',
-    horarioSaida: '18:00',
-    observacoes: 'Atraso justificado'
-  }
 ])
 
 const termoPesquisa = ref('')

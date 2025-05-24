@@ -13,6 +13,7 @@ const filtroSelecionado = ref('nome');
 const currentPage = ref(1);
 const pageSize = 10;
 
+
 const options = [
   { value: 'nome', label: 'Nome' },
   { value: 'cpf', label: 'CPF' },
@@ -20,17 +21,18 @@ const options = [
   { value: 'funcao', label: 'Função' }
 ];
 
+// Cadastro modal
 const modalAberto = ref(false);
 const funcionario = ref({
-  foto: null as File | null,
-  fotoUrl: '',
   id: null,
   nome: '',
   cpf: '',
   empresa: '',
   cargaHoraria: '',
   funcao: '',
-  email: ''
+  email: '',
+  foto: null as File | null,
+  fotoUrl: ''
 });
 const toast = useToast();
 
@@ -41,22 +43,21 @@ const abrirModal = () => {
 const fecharModal = () => {
   modalAberto.value = false;
   funcionario.value = {
-    foto: null,
-    fotoUrl: '',
     id: null,
     nome: '',
     cpf: '',
     empresa: '',
     cargaHoraria: '',
     funcao: '',
-    email: ''
+    email: '',
+    foto: null,
+    fotoUrl: ''
   };
 };
 
+
 const editarFuncionario = (f: any) => {
   funcionario.value = {
-    foto: null,
-    fotoUrl: formatarURLImagem(f.imagem),
     id: f.id,
     nome: f.nome || '',
     cpf: f.cpf || '',
@@ -64,9 +65,12 @@ const editarFuncionario = (f: any) => {
     cargaHoraria: f.cargaHoraria || '',
     funcao: f.funcao || '',
     email: f.email || '',
+    foto: null,
+    fotoUrl: formatarURLImagem(f.imagem)
   };
   modalAberto.value = true;
 };
+
 
 const fetchFuncionarios = async () => {
   try {
@@ -130,10 +134,11 @@ const salvarCadastro = async () => {
       title: 'Erro ao salvar',
       icon: 'i-heroicons-x-circle',
       timeout: 6000,
-      color: 'red'
+      color: 'red' 
     });
   }
 };
+
 
 const handleFileUpload = (event: Event) => {
   const input = event.target as HTMLInputElement;
@@ -156,7 +161,7 @@ const funcionariosPaginados = computed(() => {
   return funcionariosFiltrados.value.slice(start, start + pageSize);
 });
 
-const exportToExcel = () => {
+const exportToCSV = () => {
   if (funcionariosSelecionados.value.length === 0) {
     alert('Selecione pelo menos um funcionário para exportar!');
     return;
@@ -193,68 +198,29 @@ const exportToPDF = () => {
   doc.save('relatorio_funcionarios.pdf');
 };
 
-const modalConfirmacaoAberta = ref(false);
-const funcionarioParaDeletar = ref<any>(null);
-
-const abrirModalConfirmacao = (f: any) => {
-  funcionarioParaDeletar.value = f;
-  modalConfirmacaoAberta.value = true;
-};
-
-const cancelarDelecao = () => {
-  funcionarioParaDeletar.value = null;
-  modalConfirmacaoAberta.value = false;
-};
-
-const confirmarDelecao = async () => {
-  if (!funcionarioParaDeletar.value) return;
-  try {
-    await axios.delete(`http://localhost:8080/api/funcionarios/${funcionarioParaDeletar.value.id}`);
-    toast.add({
-      title: 'Funcionário deletado com sucesso!',
-      icon: 'i-heroicons-check-circle',
-      color: 'green'
-    });
-    modalConfirmacaoAberta.value = false;
-    funcionarioParaDeletar.value = null;
-    fetchFuncionarios();
-  } catch (error) {
-    console.error('Erro ao deletar funcionário:', error);
-    toast.add({
-      title: 'Erro ao deletar funcionário',
-      icon: 'i-heroicons-x-circle',
-      color: 'red'
-    });
-  }
-};
-
-const deletarFuncionario = (f: any) => {
-  abrirModalConfirmacao(f);
-};
-
 const page = currentPage;
 const items = computed(() => funcionariosFiltrados.value);
 </script>
 
 <template>
   <div class="grid justify-items-center">
-    <UCard class="w-3/4">
+    <UCard class="w-11/12 md:w-4/5">
       <template #header>
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-4">
-          <h2 class="text-xl font-bold">Relatório de Funcionários</h2>
-         <div class="flex gap-2">
-  <UButton color="primary" @click="abrirModal">
-    Cadastrar Funcionário
-  </UButton>
-  <UButton color="white" @click="exportToExcel" icon="heroicons:arrow-down-tray">
-    Exportar CSV
-  </UButton>
-  <UButton color="white" @click="exportToPDF" icon="heroicons:arrow-down-tray">
-    Exportar PDF
-  </UButton>
-  <UPopover>
-    <UButton icon="heroicons:funnel-solid" />
+        <div class="flex justify-between items-center w-full flex-wrap gap-2">
+          <h2 class="text-xl font-bold">Funcionários</h2>
+          <div class="flex gap-2 flex-wrap">
+            <UButton color="primary" @click="abrirModal">Cadastrar Funcionário</UButton>
 
+            <UButton color="white" icon="heroicons:arrow-down-tray" @click="exportToCSV">
+              Exportar CSV
+            </UButton>
+
+            <UButton color="white" icon="heroicons:arrow-down-tray" @click="exportToPDF">
+              Exportar PDF
+            </UButton>
+
+            <UPopover>
+              <UButton icon="heroicons:funnel-solid" />
               <template #panel>
                 <div class="p-4">
                   <URadioGroup v-model="filtroSelecionado" legend="Filtrar por" :options="options" />
@@ -265,10 +231,11 @@ const items = computed(() => funcionariosFiltrados.value);
         </div>
       </template>
 
+
       <UInput v-model="termoPesquisa" placeholder="Digite para filtrar" class="mt-2" />
 
       <table class="w-full border-collapse border border-gray-300 dark:border-gray-600 mt-4">
-        <thead>
+         <thead>
           <tr class="bg-gray-100 dark:bg-gray-800">
             <th></th>
             <th class="text-center">Foto</th>
@@ -280,16 +247,15 @@ const items = computed(() => funcionariosFiltrados.value);
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(funcionario, index) in funcionariosPaginados" :key="index" class="text-center">
-            <td><input type="checkbox" v-model="funcionariosSelecionados" :value="funcionario" /></td>
-            <td><img :src="formatarURLImagem(funcionario.imagem)" alt="Foto" class="w-12 h-12 rounded-full object-cover" /></td>
+          <tr v-for="(funcionario, index) in funcionariosPaginados" :key="index" class="hover:bg-gray-50 hover:dark:bg-gray-800">
+            <td class="text-center"><input type="checkbox" v-model="funcionariosSelecionados" :value="funcionario" /></td>
+            <td class="text-center"><img :src="formatarURLImagem(funcionario.imagem)" alt="Foto" class="w-12 h-12 rounded-full object-cover" /></td>
             <td>{{ funcionario.nome }}</td>
             <td>{{ funcionario.cpf }}</td>
             <td>{{ funcionario.empresa }}</td>
             <td>{{ funcionario.funcao }}</td>
-            <td class="flex gap-2 justify-center">
+            <td class="text-center">
               <UButton icon="heroicons:pencil-square" color="primary" variant="ghost" @click="editarFuncionario(funcionario)" />
-              <UButton icon="heroicons:trash" color="red" variant="ghost" @click="deletarFuncionario(funcionario)" />
             </td>
           </tr>
         </tbody>
@@ -300,37 +266,32 @@ const items = computed(() => funcionariosFiltrados.value);
       </div>
     </UCard>
 
-    <!-- Modal cadastro -->
-    <UModal v-model:show="modalAberto" title="Cadastrar/Editar Funcionário" size="lg">
-      <form @submit.prevent="salvarCadastro" class="space-y-4">
-        <div class="flex flex-col items-center gap-4">
-          <div class="relative w-32 h-32">
-            <img v-if="funcionario.fotoUrl" :src="funcionario.fotoUrl" alt="Foto do funcionário"
-              class="rounded-full object-cover w-full h-full" />
-            <div v-else class="rounded-full bg-gray-300 w-full h-full flex items-center justify-center">
-              <span class="text-gray-500">Sem foto</span>
-            </div>
-            <input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer"
-              @change="handleFileUpload" />
+    <UModal v-model="modalAberto">
+      <UCard class="w-full max-w-2xl mx-auto">
+        <template #header>
+          <h2 class="text-lg font-bold">Cadastro de Funcionário</h2>
+        </template>
+        <div class="grid justify-items-center">
+          <UFormGroup label="Foto">
+          <input type="file" @change="handleFileUpload" accept="image/png, image/jpeg" />
+          <div v-if="funcionario.fotoUrl" class="flex justify-center mt-2">
+          <img :src="funcionario.fotoUrl" class="w-24 h-24 rounded-full object-cover" /></div>
+          <UFormGroup label="Nome"><UInput v-model="funcionario.nome" /></UFormGroup>
+          <UFormGroup label="CPF"><UInput v-model="funcionario.cpf" /></UFormGroup>
+          <UFormGroup label="Empresa"><UInput v-model="funcionario.empresa" /></UFormGroup>
+          <UFormGroup label="Carga Horária"><UInput v-model="funcionario.cargaHoraria" /></UFormGroup>
+          <UFormGroup label="Função"><UInput v-model="funcionario.funcao" /></UFormGroup>
+          <UFormGroup label="Email"><UInput v-model="funcionario.email" /></UFormGroup>
+            
+          </UFormGroup>
+        </div>
+        <template #footer>
+          <div class="flex justify-end gap-2">
+            <UButton @click="fecharModal" color="gray">Cancelar</UButton>
+            <UButton @click="salvarCadastro" color="primary">Salvar</UButton>
           </div>
-        </div>
-
-        <UInput v-model="funcionario.nome" label="Nome" required />
-        <UInput v-model="funcionario.cpf" label="CPF" required />
-        <UInput v-model="funcionario.empresa" label="Empresa" required />
-        <UInput v-model="funcionario.cargaHoraria" label="Carga Horária" required />
-        <UInput v-model="funcionario.funcao" label="Função" required />
-        <UInput v-model="funcionario.email" label="Email" required />
-
-        <div class="flex justify-end gap-2">
-          <UButton type="submit" color="primary">
-            {{ funcionario.id ? 'Atualizar' : 'Cadastrar' }}
-          </UButton>
-          <UButton type="button" color="gray" @click="fecharModal">
-            Cancelar
-          </UButton>
-        </div>
-      </form>
+        </template>
+      </UCard>
     </UModal>
   </div>
 </template>
