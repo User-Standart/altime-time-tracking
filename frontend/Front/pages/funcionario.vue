@@ -8,6 +8,7 @@ import { cadastrarFuncionario, uploadImagemFuncionario } from '@/services/api';
 
 const funcionarios = ref<any[]>([]);
 const empresas = ref<any[]>([]);
+const cargos = ref<any[]>([]);  // <-- adicionado
 const funcionariosSelecionados = ref<any[]>([]);
 const termoPesquisa = ref('');
 const filtroSelecionado = ref('nome');
@@ -28,7 +29,7 @@ const funcionario = ref({
   cpf: '',
   empresa: '',
   cargaHoraria: '',
-  cargo: '',
+  cargo: '',      // campo cargo mantido como string
   email: '',
   foto: null as File | null,
   fotoUrl: ''
@@ -86,9 +87,19 @@ const fetchEmpresas = async () => {
   }
 };
 
+const fetchCargos = async () => {   // <-- função nova para buscar cargos
+  try {
+    const response = await axios.get('http://localhost:8080/api/cargos');
+    cargos.value = response.data;
+  } catch (error) {
+    console.error('Erro ao carregar cargos', error);
+  }
+};
+
 onMounted(() => {
   fetchFuncionarios();
   fetchEmpresas();
+  fetchCargos();  // <-- chamada nova
 });
 
 const formatarURLImagem = (caminhoRelativo: string) => {
@@ -279,14 +290,17 @@ const exportToPDF = () => {
 
         <div class="grid gap-4">
           <UFormGroup label="Foto">
-            <input type="file" @change="handleFileUpload" accept="image/png, image/jpeg" />
-            <div v-if="funcionario.fotoUrl" class="flex justify-center mt-2">
-              <img :src="funcionario.fotoUrl" class="w-24 h-24 rounded-full object-cover" />
-            </div>
+            <input type="file" @change="handleFileUpload" accept="image/*" />
+            <img v-if="funcionario.fotoUrl" :src="funcionario.fotoUrl" alt="Foto" class="w-24 h-24 rounded-full object-cover mt-2" />
           </UFormGroup>
 
-          <UFormGroup label="Nome"><UInput v-model="funcionario.nome" /></UFormGroup>
-          <UFormGroup label="CPF"><UInput v-model="funcionario.cpf" /></UFormGroup>
+          <UFormGroup label="Nome">
+            <UInput v-model="funcionario.nome" />
+          </UFormGroup>
+
+          <UFormGroup label="CPF">
+            <UInput v-model="funcionario.cpf" />
+          </UFormGroup>
 
           <UFormGroup label="Empresa">
             <USelect
@@ -296,17 +310,27 @@ const exportToPDF = () => {
             />
           </UFormGroup>
 
-          <UFormGroup label="Carga Horária"><UInput v-model="funcionario.cargaHoraria" /></UFormGroup>
-          <UFormGroup label="Cargo"><UInput v-model="funcionario.cargo" /></UFormGroup>
-          <UFormGroup label="Email"><UInput v-model="funcionario.email" /></UFormGroup>
-        </div>
+          <UFormGroup label="Carga Horária">
+            <UInput v-model="funcionario.cargaHoraria" />
+          </UFormGroup>
 
-        <template #footer>
+          <UFormGroup label="Cargo">
+            <USelect
+              v-model="funcionario.cargo"
+              :options="cargos.map(c => ({ label: c.nome, value: c.nome }))"
+              placeholder="Selecione um cargo"
+            />
+          </UFormGroup>
+
+          <UFormGroup label="Email">
+            <UInput v-model="funcionario.email" />
+          </UFormGroup>
+
           <div class="flex justify-end gap-2">
-            <UButton @click="fecharModal" color="gray">Cancelar</UButton>
-            <UButton @click="salvarCadastro" color="primary">Salvar</UButton>
+            <UButton color="primary" @click="salvarCadastro">Salvar</UButton>
+            <UButton color="white" @click="fecharModal">Cancelar</UButton>
           </div>
-        </template>
+        </div>
       </UCard>
     </UModal>
   </div>
