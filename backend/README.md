@@ -50,7 +50,7 @@ A arquitetura do backend foi mantida sólida, com adições e aprimoramentos nes
 
 A documentação de todos os endpoints está disponível através do **Swagger**:  
 
-**➡️ `/swagger-ui.html`** (após rodar o projeto localmente)
+**➡️ `http://localhost:8080/swagger-ui/index.html`** (após rodar o projeto localmente)
 
 ---
 
