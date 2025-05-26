@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,8 +21,7 @@ import br.com.altave.api.repository.FuncionarioRepository;
 @Service
 public class FuncionarioService {
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    private final String uploadDir = System.getProperty("user.dir") + "/uploads/";
 
     private final FuncionarioRepository repository;
     private final ContratoRepository contratoRepository;
@@ -36,8 +34,7 @@ public class FuncionarioService {
         this.contratoRepository = contratoRepository;
     }
 
-    // Salvar imagem de um funcionário
-    public String salvarImagem(Integer id, MultipartFile file) {
+    public String salvarImagem(Long id, MultipartFile file) {
         return repository.findById(id).map(funcionario -> {
             try {
                 File directory = new File(uploadDir);
@@ -50,7 +47,7 @@ public class FuncionarioService {
 
                 Files.copy(file.getInputStream(), path);
 
-                String fileUrl = "/api/funcionarios/uploads/" + fileName;
+                String fileUrl = "/uploads/" + fileName;
 
                 funcionario.setImagem(fileUrl);
                 repository.save(funcionario);
@@ -62,45 +59,34 @@ public class FuncionarioService {
         }).orElse(null);
     }
 
-    // Recuperar URL da imagem de um funcionário
-    public String recuperarImagem(Integer id) {
+    public String recuperarImagem(Long id) {
         return repository.findById(id).map(Funcionario::getImagem).orElse(null);
     }
 
-    // Listar todos os funcionários com dados completos
     public List<Funcionario> listarTodos() {
         return repository.findAllComDetalhes();
     }
 
-    // Buscar funcionário por ID com dados completos
-    public Optional<Funcionario> buscarPorId(Integer id) {
+    public Optional<Funcionario> buscarPorId(Long id) {
         return repository.findByIdComDetalhes(id);
     }
 
-    // Salvar um novo funcionário e criar contrato automaticamente
     public Funcionario salvar(Funcionario funcionario) {
-        // Salva primeiro o funcionário para obter o ID
         Funcionario funcionarioSalvo = repository.save(funcionario);
 
-        // Cria o contrato associado ao funcionário salvo
         Contrato contrato = new Contrato();
         contrato.setFuncionario(funcionarioSalvo);
         contrato.setEmpresa(funcionarioSalvo.getEmpresa());
 
-        // Salva o contrato
         Contrato contratoSalvo = contratoRepository.save(contrato);
 
-        // Associa o contrato ao funcionário
         funcionarioSalvo.setContrato(contratoSalvo);
 
-        // Atualiza o funcionário com o contrato vinculado
         return repository.save(funcionarioSalvo);
     }
 
-    // Atualizar um funcionário existente
-    public Optional<Funcionario> atualizar(Integer id, Funcionario funcionarioAtualizado) {
+    public Optional<Funcionario> atualizar(Long id, Funcionario funcionarioAtualizado) {
         return repository.findById(id).map(funcionario -> {
-            // Atualiza campos básicos
             funcionario.setNome(funcionarioAtualizado.getNome());
             funcionario.setCpf(funcionarioAtualizado.getCpf());
             funcionario.setFuncao(funcionarioAtualizado.getFuncao());
@@ -109,7 +95,6 @@ public class FuncionarioService {
             funcionario.setCargo(funcionarioAtualizado.getCargo());
             funcionario.setEmpresa(funcionarioAtualizado.getEmpresa());
 
-            // Se tiver contrato novo, salva também
             if (funcionarioAtualizado.getContrato() != null && funcionarioAtualizado.getContrato().getId() == null) {
                 Contrato contrato = funcionarioAtualizado.getContrato();
                 contrato.setFuncionario(funcionario);
@@ -117,17 +102,14 @@ public class FuncionarioService {
                 funcionario.setContrato(contratoRepository.save(contrato));
             }
 
-            // Salva o funcionário atualizado
             return repository.save(funcionario);
         });
     }
 
-    // Deletar um funcionário
-    public void deletar(Integer id) {
+    public void deletar(Long id) {
         repository.deleteById(id);
     }
 
-    // Contar funcionários por empresa
     public Map<String, Long> getFuncionariosPorEmpresa() {
         List<Object[]> resultados = repository.countFuncionariosPorEmpresa();
         Map<String, Long> mapa = new HashMap<>();

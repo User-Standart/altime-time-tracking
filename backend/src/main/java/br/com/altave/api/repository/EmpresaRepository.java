@@ -1,9 +1,12 @@
 package br.com.altave.api.repository;
 
-import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
 import br.com.altave.api.model.Empresa;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
+@Repository
 public interface EmpresaRepository extends JpaRepository<Empresa, String> {
-    Optional<Empresa> findById(String cnpj); // CNPJ como ID
+    Optional<Empresa> findByCnpj(String cnpj);
 }

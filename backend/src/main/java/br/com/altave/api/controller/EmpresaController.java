@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
 @RequestMapping("/api/empresa")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class EmpresaController {
 
     private final EmpresaService service;

@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
 @RequestMapping("/api/registro")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RegistroDePontoController {
 
     private final RegistroDePontoService service;

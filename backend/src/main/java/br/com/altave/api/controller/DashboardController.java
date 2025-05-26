@@ -9,7 +9,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/dashboard")
-@CrossOrigin("*") // Ajuste conforme sua URL frontend
 public class DashboardController {
 
     private final DashboardService dashboardService;

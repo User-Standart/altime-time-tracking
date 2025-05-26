@@ -1,155 +1,146 @@
 package br.com.altave.api.controller;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import br.com.altave.api.model.Cargo;
+import br.com.altave.api.model.Empresa;
+import br.com.altave.api.model.Funcionario;
+import br.com.altave.api.repository.CargoRepository;
+import br.com.altave.api.repository.EmpresaRepository;
+import br.com.altave.api.repository.FuncionarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.altave.api.model.Funcionario;
-import br.com.altave.api.service.FuncionarioService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/funcionarios")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FuncionarioController {
 
-    private final FuncionarioService service;
-    private final Path uploadDir;
+    @Autowired
+    private FuncionarioRepository funcionarioRepository;
 
-    public FuncionarioController(FuncionarioService service, @Value("${file.upload-dir}") String uploadDirPath) {
-        this.service = service;
-        this.uploadDir = Paths.get(uploadDirPath);
-    }
+    @Autowired
+    private EmpresaRepository empresaRepository;
 
-    @Operation(description = "Busca todos os funcionários e retorna seus dados completos.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de funcionários retornada com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Nenhum funcionário encontrado.")
-    })
+    @Autowired
+    private CargoRepository cargoRepository;
+
+    private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
+
     @GetMapping
-    public ResponseEntity<List<Funcionario>> listarTodos() {
-        List<Funcionario> funcionarios = service.listarTodos();
-        return !funcionarios.isEmpty() ? ResponseEntity.ok(funcionarios) : ResponseEntity.notFound().build();
+    public List<Funcionario> listarTodos() {
+        return funcionarioRepository.findAllComDetalhes();
     }
 
-    @Operation(description = "Busca um funcionário específico pelo ID e retorna seus dados completos.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Funcionário encontrado e retornado com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Funcionário não encontrado.")
-    })
+    @GetMapping("/empresa/{cnpj}")
+    public List<Funcionario> listarPorEmpresa(@PathVariable String cnpj) {
+        return funcionarioRepository.findByEmpresaCnpj(cnpj);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Funcionario> buscarPorId(@PathVariable Integer id) {
-        return service.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Funcionario> buscarPorId(@PathVariable Long id) {
+        Optional<Funcionario> funcionario = funcionarioRepository.findByIdComDetalhes(id);
+        return funcionario.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Operation(description = "Cria um novo funcionário com os dados fornecidos.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Funcionário criado com sucesso."),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos para criação do funcionário.")
-    })
     @PostMapping
-    public ResponseEntity<Funcionario> salvar(@RequestBody Funcionario funcionario) {
-        Funcionario salvo = service.salvar(funcionario);
-        return ResponseEntity.status(201).body(salvo);
-    }
-
-    @Operation(description = "Atualiza os dados de um funcionário existente pelo ID.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Funcionário atualizado com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Funcionário não encontrado."),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos para atualização.")
-    })
-    @PutMapping("/{id}")
-    public ResponseEntity<Funcionario> atualizar(
-            @PathVariable Integer id,
-            @RequestBody Funcionario funcionarioAtualizado) {
-        return service.atualizar(id, funcionarioAtualizado)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @Operation(description = "Deleta um funcionário pelo ID informado.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Funcionário deletado com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Funcionário não encontrado.")
-    })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
-        service.deletar(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @Operation(description = "Faz o upload da imagem de um funcionário pelo ID.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Imagem enviada com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Funcionário não encontrado."),
-            @ApiResponse(responseCode = "500", description = "Erro interno ao salvar a imagem.")
-    })
-    @PostMapping("/{id}/imagem")
-    public ResponseEntity<String> uploadImagem(
-            @PathVariable Integer id,
-            @RequestParam("file") MultipartFile file) {
-        String imageUrl = service.salvarImagem(id, file);
-        if (imageUrl != null) {
-            return ResponseEntity.ok("Imagem salva com sucesso: " + imageUrl);
-        }
-        return ResponseEntity.status(404).body("Funcionário não encontrado");
-    }
-
-    @Operation(description = "Recupera a URL da imagem de um funcionário pelo ID.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "URL da imagem retornada com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Nenhuma imagem encontrada para o funcionário informado."),
-            @ApiResponse(responseCode = "500", description = "Erro interno ao processar a solicitação.")
-    })
-    @GetMapping("/{id}/imagem")
-    public ResponseEntity<String> getImagem(@PathVariable Integer id) {
+    public ResponseEntity<?> criar(@RequestBody Map<String, Object> payload) {
         try {
-            String imageUrl = service.recuperarImagem(id);
-            return imageUrl != null ? ResponseEntity.ok(imageUrl) : ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
-    }
+            String nome = (String) payload.get("nome");
+            String cpf = (String) payload.get("cpf");
+            String email = (String) payload.get("email");
+            String cnpjEmpresa = (String) payload.get("empresa");
+            Long cargoId = Long.valueOf(payload.get("cargo").toString());
+            Integer cargaHoraria = Integer.valueOf(payload.get("cargaHoraria").toString());
 
-    @GetMapping("/uploads/{filename:.+}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-        try {
-            Path file = uploadDir.resolve(filename);
-            Resource resource = new UrlResource(file.toUri());
+            Optional<Empresa> empresaOpt = empresaRepository.findByCnpj(cnpjEmpresa);
+            Optional<Cargo> cargoOpt = cargoRepository.findById(cargoId);
 
-            if (resource.exists() && resource.isReadable()) {
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                        .contentType(MediaType.IMAGE_JPEG)
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
+            if (empresaOpt.isEmpty() || cargoOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empresa ou Cargo inválido");
             }
-        } catch (IOException e) {
-            return ResponseEntity.status(500).build();
+
+            Funcionario funcionario = new Funcionario();
+            funcionario.setNome(nome);
+            funcionario.setCpf(cpf);
+            funcionario.setEmail(email);
+            funcionario.setCargaHoraria(cargaHoraria);
+            funcionario.setEmpresa(empresaOpt.get());
+            funcionario.setCargo(cargoOpt.get());
+
+            Funcionario salvo = funcionarioRepository.save(funcionario);
+            return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar funcionário");
         }
     }
 
-    @GetMapping("/por-empresa")
-    public ResponseEntity<Map<String, Long>> getFuncionariosPorEmpresa() {
-        Map<String, Long> dados = service.getFuncionariosPorEmpresa();
-        return ResponseEntity.ok(dados);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Map<String, Object> payload) {
+        Optional<Funcionario> funcionarioOpt = funcionarioRepository.findById(id);
+        if (funcionarioOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            String nome = (String) payload.get("nome");
+            String cpf = (String) payload.get("cpf");
+            String email = (String) payload.get("email");
+            String cnpjEmpresa = (String) payload.get("empresa");
+            Long cargoId = Long.valueOf(payload.get("cargo").toString());
+            Integer cargaHoraria = Integer.valueOf(payload.get("cargaHoraria").toString());
+
+            Optional<Empresa> empresaOpt = empresaRepository.findByCnpj(cnpjEmpresa);
+            Optional<Cargo> cargoOpt = cargoRepository.findById(cargoId);
+
+            if (empresaOpt.isEmpty() || cargoOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empresa ou Cargo inválido");
+            }
+
+            Funcionario funcionario = funcionarioOpt.get();
+            funcionario.setNome(nome);
+            funcionario.setCpf(cpf);
+            funcionario.setEmail(email);
+            funcionario.setCargaHoraria(cargaHoraria);
+            funcionario.setEmpresa(empresaOpt.get());
+            funcionario.setCargo(cargoOpt.get());
+
+            Funcionario atualizado = funcionarioRepository.save(funcionario);
+            return ResponseEntity.ok(atualizado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar funcionário");
+        }
+    }
+
+    @PostMapping("/{id}/imagem")
+    public ResponseEntity<String> uploadImagem(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file) {
+        Optional<Funcionario> funcionarioOpt = funcionarioRepository.findById(id);
+        if (funcionarioOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Funcionário não encontrado");
+        }
+
+        try {
+            String filename = UUID.randomUUID() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
+            File uploadDir = new File(UPLOAD_DIR);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+            File destino = new File(UPLOAD_DIR + filename);
+            file.transferTo(destino);
+
+            Funcionario funcionario = funcionarioOpt.get();
+            funcionario.setImagem("/uploads/" + filename);
+            funcionarioRepository.save(funcionario);
+
+            return ResponseEntity.ok("Imagem enviada com sucesso");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar imagem");
+        }
     }
 }
