@@ -6,38 +6,42 @@ import axios from 'axios';
 import { useToast } from '#imports';
 import { cadastrarFuncionario, uploadImagemFuncionario } from '@/services/api';
 
+// Variáveis reativas
 const funcionarios = ref<any[]>([]);
 const empresas = ref<any[]>([]);
-const cargos = ref<any[]>([]);  // <-- adicionado
+const cargos = ref<any[]>([]);
 const funcionariosSelecionados = ref<any[]>([]);
 const termoPesquisa = ref('');
 const filtroSelecionado = ref('nome');
 const currentPage = ref(1);
 const pageSize = 10;
-
 const options = [
   { value: 'nome', label: 'Nome' },
   { value: 'cpf', label: 'CPF' },
   { value: 'empresa', label: 'Empresa' },
   { value: 'cargo', label: 'Cargo' }
 ];
-
 const modalAberto = ref(false);
+
+// Modelo de funcionário
 const funcionario = ref({
   id: null,
   nome: '',
   cpf: '',
   empresa: '',
+  empresaCnpj: '',
   cargaHoraria: '',
-  cargo: '',      // campo cargo mantido como string
+  cargo: '',
+  cargoId: null,
   email: '',
   foto: null as File | null,
   fotoUrl: ''
 });
-
 const toast = useToast();
 
-const abrirModal = () => { modalAberto.value = true; };
+const abrirModal = () => {
+  modalAberto.value = true;
+};
 
 const fecharModal = () => {
   modalAberto.value = false;
@@ -46,8 +50,10 @@ const fecharModal = () => {
     nome: '',
     cpf: '',
     empresa: '',
+    empresaCnpj: '',
     cargaHoraria: '',
     cargo: '',
+    cargoId: null,
     email: '',
     foto: null,
     fotoUrl: ''
@@ -59,9 +65,11 @@ const editarFuncionario = (f: any) => {
     id: f.id,
     nome: f.nome || '',
     cpf: f.cpf || '',
-    empresa: f.empresa || '',
+    empresa: f.empresa?.nome || '',
+    empresaCnpj: f.empresa?.cnpj || '',
     cargaHoraria: f.cargaHoraria || '',
-    cargo: f.cargo || '',
+    cargo: f.cargo?.nomeCargo || '',
+    cargoId: f.cargo?.id || null,
     email: f.email || '',
     foto: null,
     fotoUrl: formatarURLImagem(f.imagem)
@@ -80,17 +88,18 @@ const fetchFuncionarios = async () => {
 
 const fetchEmpresas = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/empresas');
+    const response = await axios.get('http://localhost:8080/api/empresa');
     empresas.value = response.data;
   } catch (error) {
     console.error('Erro ao carregar empresas', error);
   }
 };
 
-const fetchCargos = async () => {   // <-- função nova para buscar cargos
+const fetchCargos = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/cargos');
+    const response = await axios.get('http://localhost:8080/cargo');
     cargos.value = response.data;
+    console.log('Cargos carregados:', cargos.value);
   } catch (error) {
     console.error('Erro ao carregar cargos', error);
   }
@@ -99,7 +108,7 @@ const fetchCargos = async () => {   // <-- função nova para buscar cargos
 onMounted(() => {
   fetchFuncionarios();
   fetchEmpresas();
-  fetchCargos();  // <-- chamada nova
+  fetchCargos();
 });
 
 const formatarURLImagem = (caminhoRelativo: string) => {
@@ -110,29 +119,27 @@ const formatarURLImagem = (caminhoRelativo: string) => {
 const salvarCadastro = async () => {
   try {
     let response;
-
     if (funcionario.value.id) {
       response = await axios.put(`http://localhost:8080/api/funcionarios/${funcionario.value.id}`, {
         nome: funcionario.value.nome,
         cpf: funcionario.value.cpf,
-        empresa: funcionario.value.empresa,
+        empresa: funcionario.value.empresaCnpj,
         cargaHoraria: funcionario.value.cargaHoraria,
-        cargo: funcionario.value.cargo,
-        email: funcionario.value.email,
+        cargo: funcionario.value.cargoId || undefined,
+        email: funcionario.value.email
       });
     } else {
       response = await cadastrarFuncionario({
         nome: funcionario.value.nome,
         cpf: funcionario.value.cpf,
-        empresa: funcionario.value.empresa,
+        empresa: funcionario.value.empresaCnpj,
         cargaHoraria: funcionario.value.cargaHoraria,
-        cargo: funcionario.value.cargo,
-        email: funcionario.value.email,
+        cargo: funcionario.value.cargoId || undefined,
+        email: funcionario.value.email
       });
     }
 
     const funcionarioId = funcionario.value.id || response.data.id;
-
     if (funcionario.value.foto) {
       await uploadImagemFuncionario(funcionarioId, funcionario.value.foto);
     }
@@ -144,7 +151,6 @@ const salvarCadastro = async () => {
       timeout: 6000,
       color: 'green'
     });
-
     fecharModal();
     fetchFuncionarios();
   } catch (error) {
@@ -170,11 +176,12 @@ const handleFileUpload = (event: Event) => {
 const funcionariosFiltrados = computed(() => {
   if (!termoPesquisa.value) return funcionarios.value;
   return funcionarios.value.filter(f =>
-    f[filtroSelecionado.value]?.toLowerCase().includes(termoPesquisa.value.toLowerCase())
+    f[filtroSelecionado.value]?.toString().toLowerCase().includes(termoPesquisa.value.toLowerCase())
   );
 });
 
 const totalPaginas = computed(() => Math.ceil(funcionariosFiltrados.value.length / pageSize));
+
 const funcionariosPaginados = computed(() => {
   const start = (currentPage.value - 1) * pageSize;
   return funcionariosFiltrados.value.slice(start, start + pageSize);
@@ -209,8 +216,8 @@ const exportToPDF = () => {
   for (const f of funcionariosSelecionados.value) {
     doc.text(f.nome || '', 14, y);
     doc.text(f.cpf || '', 44, y);
-    doc.text(f.empresa || '', 74, y);
-    doc.text(f.cargo || '', 104, y);
+    doc.text(f.empresa?.nome || '', 74, y);
+    doc.text(f.cargo?.nomeCargo || '', 104, y);
     doc.text(f.email || '', 134, y);
     y += 10;
   }
@@ -226,12 +233,8 @@ const exportToPDF = () => {
           <h2 class="text-xl font-bold">Funcionários</h2>
           <div class="flex gap-2 flex-wrap">
             <UButton color="primary" @click="abrirModal">Cadastrar Funcionário</UButton>
-            <UButton color="white" icon="heroicons:arrow-down-tray" @click="exportToCSV">
-              Exportar CSV
-            </UButton>
-            <UButton color="white" icon="heroicons:arrow-down-tray" @click="exportToPDF">
-              Exportar PDF
-            </UButton>
+            <UButton color="white" icon="heroicons:arrow-down-tray" @click="exportToCSV">Exportar CSV</UButton>
+            <UButton color="white" icon="heroicons:arrow-down-tray" @click="exportToPDF">Exportar PDF</UButton>
             <UPopover>
               <UButton icon="heroicons:funnel-solid" />
               <template #panel>
@@ -243,9 +246,7 @@ const exportToPDF = () => {
           </div>
         </div>
       </template>
-
       <UInput v-model="termoPesquisa" placeholder="Digite para filtrar" class="mt-2" />
-
       <table class="w-full border-collapse border border-gray-300 dark:border-gray-600 mt-4">
         <thead>
           <tr class="bg-gray-100 dark:bg-gray-800">
@@ -264,19 +265,18 @@ const exportToPDF = () => {
               <input type="checkbox" v-model="funcionariosSelecionados" :value="funcionario" />
             </td>
             <td class="text-center">
-              <img :src="formatarURLImagem(funcionario.imagem)" alt="Foto" class="w-12 h-12 rounded-full object-cover" />
+              <img :src="formatarURLImagem(funcionario.imagem) || '/placeholder.jpg'" alt="Foto" class="w-12 h-12 rounded-full object-cover" />
             </td>
             <td>{{ funcionario.nome }}</td>
             <td>{{ funcionario.cpf }}</td>
-            <td>{{ funcionario.empresa }}</td>
-            <td>{{ funcionario.cargo }}</td>
+            <td>{{ funcionario.empresa?.nome }}</td>
+            <td>{{ funcionario.cargo?.nomeCargo }}</td>
             <td class="text-center">
               <UButton icon="heroicons:pencil-square" color="primary" variant="ghost" @click="editarFuncionario(funcionario)" />
             </td>
           </tr>
         </tbody>
       </table>
-
       <div class="flex justify-end mt-4">
         <UPagination v-model="currentPage" :page-count="pageSize" :total="funcionariosFiltrados.length" />
       </div>
@@ -287,45 +287,50 @@ const exportToPDF = () => {
         <template #header>
           <h2 class="text-lg font-bold">Cadastro de Funcionário</h2>
         </template>
-
         <div class="grid gap-4">
           <UFormGroup label="Foto">
             <input type="file" @change="handleFileUpload" accept="image/*" />
             <img v-if="funcionario.fotoUrl" :src="funcionario.fotoUrl" alt="Foto" class="w-24 h-24 rounded-full object-cover mt-2" />
           </UFormGroup>
-
           <UFormGroup label="Nome">
             <UInput v-model="funcionario.nome" />
           </UFormGroup>
-
           <UFormGroup label="CPF">
             <UInput v-model="funcionario.cpf" />
           </UFormGroup>
-
           <UFormGroup label="Empresa">
             <USelect
               v-model="funcionario.empresa"
               :options="empresas.map(e => ({ label: e.nome, value: e.nome }))"
               placeholder="Selecione uma empresa"
+              @update:modelValue="(value) => {
+                const empresaSelecionada = empresas.find(e => e.nome === value);
+                if (empresaSelecionada) {
+                  funcionario.empresaCnpj = empresaSelecionada.cnpj;
+                }
+              }"
             />
           </UFormGroup>
-
           <UFormGroup label="Carga Horária">
             <UInput v-model="funcionario.cargaHoraria" />
           </UFormGroup>
-
           <UFormGroup label="Cargo">
             <USelect
               v-model="funcionario.cargo"
-              :options="cargos.map(c => ({ label: c.nome, value: c.nome }))"
+              :options="cargos.map(c => ({ label: c.nomeCargo, value: c.id }))"
               placeholder="Selecione um cargo"
+              @update:modelValue="(value) => {
+                const cargoSelecionado = cargos.find(c => c.id === value);
+                if (cargoSelecionado) {
+                  funcionario.cargoId = cargoSelecionado.id;
+                  funcionario.cargo = cargoSelecionado.nomeCargo;
+                }
+              }"
             />
           </UFormGroup>
-
           <UFormGroup label="Email">
             <UInput v-model="funcionario.email" />
           </UFormGroup>
-
           <div class="flex justify-end gap-2">
             <UButton color="primary" @click="salvarCadastro">Salvar</UButton>
             <UButton color="white" @click="fecharModal">Cancelar</UButton>
