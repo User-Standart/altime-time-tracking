@@ -6,7 +6,6 @@ import axios from 'axios';
 import { useToast } from '#imports';
 import { cadastrarFuncionario, uploadImagemFuncionario } from '@/services/api';
 
-// Variáveis reativas
 const funcionarios = ref<any[]>([]);
 const empresas = ref<any[]>([]);
 const cargos = ref<any[]>([]);
@@ -23,16 +22,13 @@ const options = [
 ];
 const modalAberto = ref(false);
 
-// Modelo de funcionário
 const funcionario = ref({
   id: null,
   nome: '',
   cpf: '',
   empresa: '',
-  empresaCnpj: '',
   cargaHoraria: '',
-  cargo: '',
-  cargoId: null,
+  cargo: null as number | null,
   email: '',
   foto: null as File | null,
   fotoUrl: ''
@@ -50,10 +46,8 @@ const fecharModal = () => {
     nome: '',
     cpf: '',
     empresa: '',
-    empresaCnpj: '',
     cargaHoraria: '',
-    cargo: '',
-    cargoId: null,
+    cargo: null,
     email: '',
     foto: null,
     fotoUrl: ''
@@ -65,11 +59,9 @@ const editarFuncionario = (f: any) => {
     id: f.id,
     nome: f.nome || '',
     cpf: f.cpf || '',
-    empresa: f.empresa?.nome || '',
-    empresaCnpj: f.empresa?.cnpj || '',
+    empresa: f.empresa?.cnpj || '',
     cargaHoraria: f.cargaHoraria || '',
-    cargo: f.cargo?.nomeCargo || '',
-    cargoId: f.cargo?.id || null,
+    cargo: f.cargo?.id || null,
     email: f.email || '',
     foto: null,
     fotoUrl: formatarURLImagem(f.imagem)
@@ -99,7 +91,6 @@ const fetchCargos = async () => {
   try {
     const response = await axios.get('http://localhost:8080/cargo');
     cargos.value = response.data;
-    console.log('Cargos carregados:', cargos.value);
   } catch (error) {
     console.error('Erro ao carregar cargos', error);
   }
@@ -118,28 +109,24 @@ const formatarURLImagem = (caminhoRelativo: string) => {
 
 const salvarCadastro = async () => {
   try {
-    let response;
+    const payload = {
+      nome: funcionario.value.nome,
+      cpf: funcionario.value.cpf,
+      empresa: funcionario.value.empresa,
+      cargaHoraria: funcionario.value.cargaHoraria,
+      cargo: funcionario.value.cargo,
+      email: funcionario.value.email
+    };
+
+    let funcionarioId;
     if (funcionario.value.id) {
-      response = await axios.put(`http://localhost:8080/api/funcionarios/${funcionario.value.id}`, {
-        nome: funcionario.value.nome,
-        cpf: funcionario.value.cpf,
-        empresa: funcionario.value.empresaCnpj,
-        cargaHoraria: funcionario.value.cargaHoraria,
-        cargo: funcionario.value.cargoId || undefined,
-        email: funcionario.value.email
-      });
+      await axios.put(`http://localhost:8080/api/funcionarios/${funcionario.value.id}`, payload);
+      funcionarioId = funcionario.value.id;
     } else {
-      response = await cadastrarFuncionario({
-        nome: funcionario.value.nome,
-        cpf: funcionario.value.cpf,
-        empresa: funcionario.value.empresaCnpj,
-        cargaHoraria: funcionario.value.cargaHoraria,
-        cargo: funcionario.value.cargoId || undefined,
-        email: funcionario.value.email
-      });
+      const response = await cadastrarFuncionario(payload);
+      funcionarioId = response.data.id;
     }
 
-    const funcionarioId = funcionario.value.id || response.data.id;
     if (funcionario.value.foto) {
       await uploadImagemFuncionario(funcionarioId, funcionario.value.foto);
     }
@@ -151,6 +138,7 @@ const salvarCadastro = async () => {
       timeout: 6000,
       color: 'green'
     });
+
     fecharModal();
     fetchFuncionarios();
   } catch (error) {
@@ -301,14 +289,8 @@ const exportToPDF = () => {
           <UFormGroup label="Empresa">
             <USelect
               v-model="funcionario.empresa"
-              :options="empresas.map(e => ({ label: e.nome, value: e.nome }))"
+              :options="empresas.map(e => ({ label: e.nome, value: e.cnpj }))"
               placeholder="Selecione uma empresa"
-              @update:modelValue="(value) => {
-                const empresaSelecionada = empresas.find(e => e.nome === value);
-                if (empresaSelecionada) {
-                  funcionario.empresaCnpj = empresaSelecionada.cnpj;
-                }
-              }"
             />
           </UFormGroup>
           <UFormGroup label="Carga Horária">
@@ -319,13 +301,6 @@ const exportToPDF = () => {
               v-model="funcionario.cargo"
               :options="cargos.map(c => ({ label: c.nomeCargo, value: c.id }))"
               placeholder="Selecione um cargo"
-              @update:modelValue="(value) => {
-                const cargoSelecionado = cargos.find(c => c.id === value);
-                if (cargoSelecionado) {
-                  funcionario.cargoId = cargoSelecionado.id;
-                  funcionario.cargo = cargoSelecionado.nomeCargo;
-                }
-              }"
             />
           </UFormGroup>
           <UFormGroup label="Email">
