@@ -27,9 +27,9 @@ Each delivery was made by creating a **tag** for each module (Backend, Frontend 
 
 | Sprint | Due date   | Status        | History                                                                    |
 |--------|------------|---------------|----------------------------------------------------------------------------|
-| 01     | 03/30/2025 | ✔️ Done       | [view report](https://github.com/User-Standart/API-3SEM/tree/Sprint-1)     |
-| 02     | 04/27/2025 | ✔️ Done       | [view report](https://github.com/User-Standart/API-3SEM/tree/Sprint-2)     |
-| 03     | 05/25/2025 | ✔️ Done       | [view report](https://github.com/User-Standart/API-3SEM/tree/Sprint-3)     |
+| 01     | 03/30/2025 | ✔️ Done       | [view report](https://github.com/User-Standart/altime-time-tracking/tree/Sprint-1)     |
+| 02     | 04/27/2025 | ✔️ Done       | [view report](https://github.com/User-Standart/altime-time-tracking/tree/Sprint-2)     |
+| 03     | 05/25/2025 | ✔️ Done       | [view report](https://github.com/User-Standart/altime-time-tracking/tree/Sprint-3)     |
 
 ### :clapper: Final Presentation
 
