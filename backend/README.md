@@ -54,6 +54,45 @@ Documentation for all endpoints is available through **Swagger**:
 
 ---
 
+## 🤖 AI Chat (Mistral via Ollama)
+
+The `POST /api/chat` endpoint answers natural-language questions about companies, employees and time entries using a **local LLM**, so company data never leaves the server and there are no API costs.
+
+How it works:
+
+1. `ChatService` builds a compact snapshot of the data: companies, employees (name, position, company, contracted hours), hours worked per employee over the last 30 days and the most recent time entries. CPF and email are never sent to the model.
+2. The snapshot goes in the system prompt, with instructions to answer **only** from that data and to say so when the information is not available.
+3. The question and the last 10 messages of the conversation are sent to Ollama's `/api/chat` with a low temperature (0.2) for factual answers.
+
+Setup:
+
+```bash
+# Install Ollama (https://ollama.com) and download the model
+ollama pull mistral
+
+# Optional settings (defaults shown)
+export OLLAMA_BASE_URL=http://localhost:11434
+export OLLAMA_MODEL=mistral
+```
+
+Example request:
+
+```bash
+curl -X POST http://localhost:8080/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Who worked the most hours in the last 30 days?", "history": []}'
+```
+
+If Ollama is not running, the endpoint returns `503` with a clear message. The chat UI is available in the frontend under **Chat IA**.
+
+---
+
+## 🔐 Configuration
+
+Database credentials are read from environment variables: `DB_USERNAME` (default `root`) and `DB_PASSWORD`.
+
+---
+
 ## 📌 Wrap-up
 
 With this sprint, we officially concluded the backend development of the **Altime Project**, delivering a functional, secure and well-structured system for academic use and demonstration.

@@ -8,7 +8,8 @@ const routes: Route[] = [
   { label: 'Home', to: '/', icon: 'dashicons:admin-home' },  // Página principal
   { label: 'Registro de Ponto', to: '/ponto', icon: 'mdi:clock-plus' },
   { label: 'Empresas', to: '/empresa', icon: 'heroicons:building-office-2-20-solid' },
-  { label: 'Funcionários', to: '/funcionario', icon: 'mdi:account-multiple-plus' }
+  { label: 'Funcionários', to: '/funcionario', icon: 'mdi:account-multiple-plus' },
+  { label: 'Chat IA', to: '/chat', icon: 'mdi:robot-outline' }
 ];
 
 export default routes;

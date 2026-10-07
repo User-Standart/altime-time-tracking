@@ -79,4 +79,20 @@ export const cadastrarRegistroDePonto = async (dados: RegistroPonto): Promise<Ax
   return await api.post('/registro', dados);
 };
 
+// CHAT IA
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ChatResponse {
+  answer: string;
+  model: string;
+}
+
+export const enviarMensagemChat = async (message: string, history: ChatMessage[]): Promise<AxiosResponse<ChatResponse>> => {
+  // O LLM local pode levar alguns segundos para responder
+  return await api.post('/chat', { message, history }, { timeout: 120000 });
+};
+
 export default api;

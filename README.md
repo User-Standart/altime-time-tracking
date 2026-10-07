@@ -17,6 +17,8 @@ Based on the challenge presented by the partner company, the solution is a time-
 
 It includes an interactive dashboard that gives a detailed view of all activities, making it easier to analyze and track data related to people and process management. Through this dashboard, administrators can make decisions based on metrics, patterns and indicators relevant to performance and internal organization.
 
+It also ships an **AI Chat** powered by a local LLM (**Mistral via Ollama**): managers ask questions in natural language — e.g. "Who worked the most hours in the last 30 days?" — and get answers grounded in the system's own companies, employees and time entries, fully offline and with no external API costs. See [backend/README.md](backend/README.md#-ai-chat-mistral-via-ollama) for setup.
+
 > _Project based on the SCRUM agile methodology, aiming to develop the Proactivity, Autonomy, Collaboration and Results Delivery of the students involved_
 
 :pushpin: **Project Status:** Finished ✅
@@ -131,6 +133,8 @@ The following tools, languages, libraries and technologies were used to build th
 ![Java](https://img.shields.io/badge/Java-orange?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Nuxt.js](https://img.shields.io/badge/Nuxt.js-00DC82?style=for-the-badge&logo=nuxtdotjs&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Ollama](https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=ollama&logoColor=white)
+![Mistral](https://img.shields.io/badge/Mistral-FA520F?style=for-the-badge&logo=mistralai&logoColor=white)
 <br>
 ![VS_Code](https://img.shields.io/badge/VS_Code-CED4DA?style=for-the-badge&logo=visual-studio-code&logoColor=0078D4)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
