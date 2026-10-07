@@ -1,22 +1,22 @@
-<h1 align="center">🚀 Sprint-3 - Frontend Altime</h1>
+<h1 align="center">🚀 Sprint-3 - Altime Frontend</h1>
 
 <p align="center">
-Terceira e última entrega do frontend do sistema Altime, com foco na finalização das funcionalidades, otimizações de desempenho e preparação para a entrega final.
+Third and final delivery of the Altime system frontend, focused on finishing the features, performance optimizations and preparing for the final delivery.
 </p>
 
 ---
 
-Seja bem-vindo ao **Frontend da Sprint-3** do projeto **Altime**!  
-Nesta etapa final, concentramos esforços na conclusão das funcionalidades restantes, refinamento da interface, otimização da performance e correção de bugs.  
-Nosso objetivo foi entregar uma aplicação estável, responsiva e pronta para uso, alinhada aos requisitos do projeto.
+Welcome to the **Sprint-3 Frontend** of the **Altime** project!
+In this final stage, we focused on completing the remaining features, refining the interface, optimizing performance and fixing bugs.
+Our goal was to deliver a stable, responsive, ready-to-use application aligned with the project requirements.
 
-> Trabalho desenvolvido por estudantes do 3º semestre de Banco de Dados, FATEC Profº Jessen Vidal - São José dos Campos.
+> Work developed by 3rd-semester Database Technology students, FATEC Profº Jessen Vidal - São José dos Campos, Brazil.
 
 ---
 
-## 🛠️ Ferramentas e Tecnologias Utilizadas
+## 🛠️ Tools and Technologies Used
 
-Na Sprint-3, mantivemos todas as tecnologias empregadas anteriormente, com ênfase em ferramentas para análise e melhoria da performance:
+In Sprint-3, we kept all the technologies used previously, with emphasis on tools for analyzing and improving performance:
 
 <div align="center">
 
@@ -34,42 +34,42 @@ Na Sprint-3, mantivemos todas as tecnologias empregadas anteriormente, com ênfa
 
 ---
 
-## 🖼️ Refinamentos e Entregas da Sprint
+## 🖼️ Sprint Refinements and Deliverables
 
-Nesta última sprint, priorizamos:
+In this last sprint, we prioritized:
 
 <div align="center">
 
-| Item                               | Descrição                                                                                  |
-| --------------------------------- | ------------------------------------------------------------------------------------------ |
-| :wrench: Otimização de performance | Melhoria no carregamento e fluidez da aplicação                                           |
-| :bug: Correção de bugs              | Ajustes em erros detectados durante testes                                                |
-| :lock: Implementação de segurança  | Aprimoramentos em autenticação e proteção de dados                                        |
-| :clipboard: Testes finais           | Testes manuais e automatizados para garantir a estabilidade da aplicação                  |
-| :page_facing_up: Documentação      | Atualização e finalização da documentação do frontend                                     |
-| :open_file_folder: **components/** | Ajustes finais nos componentes para maior responsividade e acessibilidade                  |
+| Item                               | Description                                                                                |
+| ---------------------------------- | ------------------------------------------------------------------------------------------ |
+| :wrench: Performance optimization  | Faster loading and smoother application                                                    |
+| :bug: Bug fixes                    | Fixes for errors found during testing                                                      |
+| :lock: Security implementation     | Improvements in authentication and data protection                                         |
+| :clipboard: Final tests            | Manual and automated tests to ensure application stability                                 |
+| :page_facing_up: Documentation     | Frontend documentation updated and finalized                                               |
+| :open_file_folder: **components/** | Final adjustments to components for better responsiveness and accessibility                |
 
 </div>
 
 ---
 
-## 🎯 Objetivos alcançados nesta Sprint
+## 🎯 Goals achieved in this Sprint
 
-✅ Entrega de uma aplicação frontend funcional e estável  
-✅ Melhoria da experiência do usuário com otimizações e correções  
-✅ Garantia de segurança básica no acesso e manipulação de dados  
-✅ Documentação atualizada para facilitar manutenção e continuidade  
-✅ Preparação para a integração final com backend e implantação
+✅ Delivery of a functional and stable frontend application
+✅ Better user experience through optimizations and fixes
+✅ Basic security for data access and handling
+✅ Updated documentation to ease maintenance and continuity
+✅ Ready for final integration with the backend and deployment
 
 ---
 
-## 🤝 Colaboração
+## 🤝 Collaboration
 
-A sinergia entre a equipe foi fundamental para o sucesso da Sprint-3.  
-Continuamos utilizando **Jira** para gestão das tarefas, **GitHub** para controle de versão e realizamos revisões constantes de código para manter a qualidade.
+Teamwork was key to the success of Sprint-3.
+We kept using **Jira** for task management and **GitHub** for version control, with constant code reviews to maintain quality.
 
 ---
 
 <p align="center">
-💡 <strong>Finalizamos a jornada frontend do Altime com uma solução madura e pronta para transformar a gestão de ponto!</strong> 💡
+💡 <strong>We wrapped up the Altime frontend journey with a mature solution ready to transform time-tracking management!</strong> 💡
 </p>

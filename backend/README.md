@@ -1,21 +1,21 @@
-<h1 align="center"> Backend - Sprint 3 - Projeto Altime</h1>
+<h1 align="center"> Backend - Sprint 3 - Altime Project</h1>
 
-Bem-vindo ao repositório do **Backend da Sprint-3** do projeto **Altime**!  
-Nesta etapa final, finalizamos o desenvolvimento das funcionalidades principais, consolidamos melhorias estruturais e garantimos a entrega de um sistema robusto, seguro e funcional.
+Welcome to the **Sprint-3 Backend** of the **Altime** project!
+In this final stage, we finished developing the main features, consolidated structural improvements and delivered a robust, secure and functional system.
 
-> Projeto desenvolvido pelos estudantes do 3º semestre do curso de Banco de Dados, na FATEC Profº Jessen Vidal - São José dos Campos, SP.
-
----
-
-## 🌟 Objetivo da Sprint
-
-Na Sprint-3, encerramos o desenvolvimento do backend do projeto Altime com foco na finalização das funcionalidades principais, na consolidação da estrutura do sistema e na preparação para a entrega final. Concluímos as regras de negócio pendentes, refatoramos trechos de código para melhorar a legibilidade e a organização, reforçamos a segurança e a performance da aplicação, além de garantir a documentação completa das rotas via Swagger. Esta sprint representou a estabilização definitiva do sistema, assegurando que todas as integrações funcionassem de forma coesa e confiável para a apresentação e entrega do projeto.
+> Project developed by 3rd-semester students of the Database Technology program at FATEC Profº Jessen Vidal - São José dos Campos, SP, Brazil.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🌟 Sprint Goal
 
-Mantivemos o uso de tecnologias modernas e ferramentas de apoio ao desenvolvimento:
+In Sprint-3, we wrapped up the backend development of the Altime project, focusing on finishing the main features, consolidating the system structure and preparing for the final delivery. We completed the pending business rules, refactored code to improve readability and organization, strengthened the application's security and performance, and fully documented the routes with Swagger. This sprint represented the final stabilization of the system, ensuring that all integrations worked cohesively and reliably for the presentation and delivery of the project.
+
+---
+
+## 🛠️ Technologies Used
+
+We kept using modern technologies and development support tools:
 
 ![Java](https://img.shields.io/badge/Java-orange?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
@@ -28,33 +28,33 @@ Mantivemos o uso de tecnologias modernas e ferramentas de apoio ao desenvolvimen
 
 ---
 
-## 📂 Estrutura Organizacional
+## 📂 Project Structure
 
-A arquitetura do backend foi mantida sólida, com adições e aprimoramentos nesta sprint final:
+The backend architecture remained solid, with additions and improvements in this final sprint:
 
-| Caminho                                            | Descrição                                                                           |
+| Path                                               | Description                                                                         |
 | -------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `src/main/java/`                                   | Código-fonte principal do backend                                                   |
-| `src/main/java/.../config`                         | Arquivos de configuração geral do sistema                                           |
-| `src/main/java/.../controller`                     | Controladores responsáveis por expor as rotas da API                                |
-| `src/main/java/.../model`                          | Entidades e modelos de dados                                                        |
-| `src/main/java/.../repository`                     | Interfaces para acesso ao banco com Spring Data JPA                                 |
-| `src/main/java/.../service`                        | Lógica de negócio e orquestração de operações                                       |
-| `src/main/resources/`                              | Configurações e scripts de inicialização                                            |
-| `pom.xml`                                          | Dependências e configuração do projeto (Maven)                                      |
-| `docker-compose.yml`                               | Orquestração de serviços para ambiente local                                        |
+| `src/main/java/`                                   | Main backend source code                                                            |
+| `src/main/java/.../config`                         | General system configuration files                                                  |
+| `src/main/java/.../controller`                     | Controllers that expose the API routes                                              |
+| `src/main/java/.../model`                          | Entities and data models                                                            |
+| `src/main/java/.../repository`                     | Database access interfaces with Spring Data JPA                                     |
+| `src/main/java/.../service`                        | Business logic and operation orchestration                                          |
+| `src/main/resources/`                              | Configuration and initialization scripts                                            |
+| `pom.xml`                                          | Project dependencies and configuration (Maven)                                      |
+| `docker-compose.yml`                               | Service orchestration for the local environment                                     |
 
 ---
 
-## 🛤️ Documentação da API
+## 🛤️ API Documentation
 
-A documentação de todos os endpoints está disponível através do **Swagger**:  
+Documentation for all endpoints is available through **Swagger**:
 
-**➡️ `http://localhost:8080/swagger-ui/index.html`** (após rodar o projeto localmente)
+**➡️ `http://localhost:8080/swagger-ui/index.html`** (after running the project locally)
 
 ---
 
-## 📌 Encerramento
+## 📌 Wrap-up
 
-Com esta sprint, encerramos oficialmente o desenvolvimento do backend do **Projeto Altime**, entregando um sistema funcional, seguro e bem estruturado para uso acadêmico e demonstração.  
-Agradecemos a todos os colaboradores, professores e colegas envolvidos no projeto!
+With this sprint, we officially concluded the backend development of the **Altime Project**, delivering a functional, secure and well-structured system for academic use and demonstration.
+Thanks to all contributors, professors and classmates involved in the project!
